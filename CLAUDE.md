@@ -2,9 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Change workflow — branch and PR for every change
+## Change workflow — a commit means branch, push, PR
 
-Never commit directly to `main`. Every change, however small, goes through its own branch and pull request.
+Committing is the developer's call. Do not commit after every edit; make the changes, report what changed, and leave them in the working tree until asked.
+
+When the developer does decide to commit, that single decision covers the whole sequence — branch, commit, push, open the pull request — carried out without further prompting. Never commit directly to `main`.
 
 1. **Branch from up-to-date `main`**, not from whatever is currently checked out:
    ```bash
