@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tic Tac Toe</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { height: 100%; }
+
+  :root {
+    --paper:      #E4E8E1;
+    --field:      #EEF0EA;
+    --ink:        #1C2422;
+    --ink-soft:   #59645F;
+    --rule:       #9FA9A3;
+    --hairline:   #C3CBC4;
+    --madder:     #A83E2E;
+    --prussian:   #16606C;
+    --shadow:     0 1px 2px rgba(28,36,34,.07), 0 10px 28px -14px rgba(28,36,34,.32);
+
+    --display: Copperplate, "Copperplate Gothic Bold", "Copperplate Gothic Light", "Engravers MT", Cambria, Georgia, serif;
+    --body: Cambria, Constantia, "Iowan Old Style", Charter, Georgia, serif;
+    --mono: Consolas, "SF Mono", Menlo, "DejaVu Sans Mono", monospace;
+
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:    #101517;
+      --field:    #171D1F;
+      --ink:      #DCE4E1;
+      --ink-soft: #8B9A96;
+      --rule:     #36433F;
+      --hairline: #2A3436;
+      --madder:   #E4715B;
+      --prussian: #55BECB;
+      --shadow:   0 1px 2px rgba(0,0,0,.5), 0 14px 34px -16px rgba(0,0,0,.8);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --paper: #E4E8E1; --field: #EEF0EA; --ink: #1C2422; --ink-soft: #59645F;
+    --rule: #9FA9A3; --hairline: #C3CBC4; --madder: #A83E2E; --prussian: #16606C;
+    --shadow: 0 1px 2px rgba(28,36,34,.07), 0 10px 28px -14px rgba(28,36,34,.32);
+  }
+  :root[data-theme="dark"] {
+    --paper: #101517; --field: #171D1F; --ink: #DCE4E1; --ink-soft: #8B9A96;
+    --rule: #36433F; --hairline: #2A3436; --madder: #E4715B; --prussian: #55BECB;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 14px 34px -16px rgba(0,0,0,.8);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 20px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 430px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  /* ---- masthead ---- */
+  .masthead { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .masthead h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 1.42rem;
+    font-weight: 400;
+    letter-spacing: .22em;
+    text-indent: .22em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    text-align: center;
+  }
+  .masthead .swash {
+    width: 100%; height: 7px; display: block; color: var(--hairline);
+  }
+  .masthead p {
+    margin: 0;
+    font-size: .875rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  /* ---- scoreboard ---- */
+  .scores {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .scores div {
+    background: var(--field);
+    padding: 9px 6px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .scores dt {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: .625rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .scores dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.32rem;
+    line-height: 1;
+  }
+  .scores .s-x dd { color: var(--madder); }
+  .scores .s-o dd { color: var(--prussian); }
+
+  /* ---- board ---- */
+  .board-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--field);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+  }
+  .rules, .strike {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .rules path {
+    fill: none;
+    stroke: var(--rule);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+  }
+  .strike path {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+
+  .board {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  }
+  .cell {
+    appearance: none;
+    background: none;
+    border: 0;
+    margin: 0;
+    padding: 9%;
+    cursor: pointer;
+    position: relative;
+    border-radius: 2px;
+  }
+  .cell[disabled] { cursor: default; }
+  .cell:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: -5px;
+  }
+  .cell svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .cell .ghost { position: absolute; inset: 9%; width: auto; height: auto; opacity: 0; transition: opacity .16s ease; }
+  .cell:hover .ghost { opacity: .15; }
+  .cell:focus-visible .ghost { opacity: .24; }
+  .board.locked .cell .ghost { opacity: 0; }
+
+  .mark path, .ghost path {
+    fill: none;
+    stroke-width: 7.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .m-x path, .g-x path { stroke: var(--madder); }
+  .m-o path, .g-o path { stroke: var(--prussian); }
+  .mark { transition: opacity .45s ease .25s; }
+  .mark.dim { opacity: .32; }
+
+  /* ---- status ---- */
+  .status {
+    margin: 0;
+    text-align: center;
+    font-size: 1.0625rem;
+    min-height: 1.5em;
+    color: var(--ink);
+  }
+  .status .who-x { color: var(--madder); }
+  .status .who-o { color: var(--prussian); }
+  .status.muted { color: var(--ink-soft); font-style: italic; }
+
+  /* ---- controls ---- */
+  .controls { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--field);
+  }
+  .seg button {
+    appearance: none;
+    border: 0;
+    border-left: 1px solid var(--hairline);
+    background: none;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: .6875rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 8px 13px;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease;
+  }
+  .seg button:first-child { border-left: 0; }
+  .seg button:hover { color: var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .seg button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+
+  .links { display: flex; gap: 20px; }
+  .links button {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    cursor: pointer;
+    font-family: var(--body);
+    font-size: .875rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .links button:hover { color: var(--ink); border-bottom-color: currentColor; }
+  .links button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .colophon {
+    margin: 0;
+    text-align: center;
+    font-size: .8125rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 34em;
+    align-self: center;
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark, .rules path, .strike path, .ghost { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<main class="sheet">
+  <header class="masthead">
+    <h1>Tic&nbsp;·&nbsp;Tac&nbsp;·&nbsp;Toe</h1>
+    <svg class="swash" viewBox="0 0 400 7" aria-hidden="true" preserveAspectRatio="none">
+      <path d="M2 4.5 C 90 2.6, 150 5.4, 200 3.4 C 250 1.6, 320 5, 398 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    <p>Three in a row. Nothing else counts.</p>
+  </header>
+
+  <dl class="scores">
+    <div class="s-x"><dt>X</dt><dd id="score-x">0</dd></div>
+    <div class="s-d"><dt>Draws</dt><dd id="score-d">0</dd></div>
+    <div class="s-o"><dt>O</dt><dd id="score-o">0</dd></div>
+  </dl>
+
+  <div class="board-wrap">
+    <svg class="rules" viewBox="0 0 300 300" aria-hidden="true">
+      <path d="M100.5 14 C 99 92, 101.8 200, 100.2 287"/>
+      <path d="M199.2 13 C 200.6 100, 197.9 210, 199.6 286"/>
+      <path d="M14 100.4 C 92 98.6, 210 101.8, 287 99.8"/>
+      <path d="M13 199.6 C 100 201.2, 200 197.9, 286 199.4"/>
+    </svg>
+    <div class="board" id="board" role="grid" aria-label="Tic tac toe board"></div>
+    <svg class="strike" id="strike" viewBox="0 0 300 300" aria-hidden="true"></svg>
+  </div>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Opponent">
+      <button type="button" data-mode="human">Two players</button>
+      <button type="button" data-mode="casual">Casual</button>
+      <button type="button" data-mode="perfect">Perfect</button>
+    </div>
+    <div class="links">
+      <button type="button" id="new-round">New round</button>
+      <button type="button" id="reset-scores">Reset scores</button>
+    </div>
+  </div>
+
+  <p class="colophon">You are always <span style="color:var(--madder)">X</span>. Casual gets distracted and misses blocks. Perfect searches every branch to the end of the game &mdash; the best you can hope for is a draw.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  var X_PATHS = ["M24 21 C 40 40, 60 60, 77 79", "M78 22 C 61 41, 40 60, 22 78"];
+  var O_PATHS = ["M50 19 C 67 19, 81 33, 81 50 C 81 67, 67 81, 50 81 C 33 81, 19 67, 19 50 C 19 33, 33 19.5, 52 20"];
+
+  var boardEl   = document.getElementById("board");
+  var strikeEl  = document.getElementById("strike");
+  var statusEl  = document.getElementById("status");
+  var scoreEls  = { X: document.getElementById("score-x"), O: document.getElementById("score-o"), D: document.getElementById("score-d") };
+  var modeBtns  = Array.prototype.slice.call(document.querySelectorAll(".seg button"));
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var state = {
+    grid: new Array(9).fill(null),
+    turn: "X",
+    over: false,
+    mode: "perfect",
+    starter: "X",
+    busy: false,
+    scores: { X: 0, O: 0, D: 0 }
+  };
+
+  var cells = [];
+  for (var i = 0; i < 9; i++) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "cell";
+    b.setAttribute("role", "gridcell");
+    b.dataset.index = String(i);
+    b.setAttribute("aria-label", "Row " + (Math.floor(i / 3) + 1) + ", column " + ((i % 3) + 1) + ", empty");
+    boardEl.appendChild(b);
+    cells.push(b);
+  }
+
+  function svgMark(player, cls) {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("class", cls + " " + cls.charAt(0) + "-" + player.toLowerCase());
+    var d = player === "X" ? X_PATHS : O_PATHS;
+    for (var k = 0; k < d.length; k++) {
+      var p = document.createElementNS(ns, "path");
+      p.setAttribute("d", d[k]);
+      svg.appendChild(p);
+    }
+    return svg;
+  }
+
+  function drawIn(svg) {
+    var paths = svg.querySelectorAll("path");
+    for (var k = 0; k < paths.length; k++) {
+      (function (p, idx) {
+        var len = p.getTotalLength();
+        if (reduced) return;
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+        p.style.transition = "stroke-dashoffset .26s ease-out " + (idx * 0.14) + "s";
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { p.style.strokeDashoffset = "0"; });
+        });
+      })(paths[k], k);
+    }
+  }
+
+  function winnerOf(g) {
+    for (var k = 0; k < WINS.length; k++) {
+      var w = WINS[k];
+      if (g[w[0]] && g[w[0]] === g[w[1]] && g[w[0]] === g[w[2]]) return { player: g[w[0]], line: w };
+    }
+    return null;
+  }
+
+  function empties(g) {
+    var out = [];
+    for (var k = 0; k < 9; k++) if (!g[k]) out.push(k);
+    return out;
+  }
+
+  function other(p) { return p === "X" ? "O" : "X"; }
+
+  function score(g, me, depth) {
+    var w = winnerOf(g);
+    if (w) return w.player === me ? 10 - depth : depth - 10;
+    if (empties(g).length === 0) return 0;
+    return null;
+  }
+
+  function minimax(g, turn, me, depth) {
+    var s = score(g, me, depth);
+    if (s !== null) return s;
+    var open = empties(g);
+    var best = turn === me ? -Infinity : Infinity;
+    for (var k = 0; k < open.length; k++) {
+      g[open[k]] = turn;
+      var v = minimax(g, other(turn), me, depth + 1);
+      g[open[k]] = null;
+      best = turn === me ? Math.max(best, v) : Math.min(best, v);
+    }
+    return best;
+  }
+
+  function perfectMove(g, me) {
+    var open = empties(g), best = -Infinity, pick = open[0];
+    for (var k = 0; k < open.length; k++) {
+      g[open[k]] = me;
+      var v = minimax(g, other(me), me, 1);
+      g[open[k]] = null;
+      if (v > best) { best = v; pick = open[k]; }
+    }
+    return pick;
+  }
+
+  function completing(g, p) {
+    for (var k = 0; k < WINS.length; k++) {
+      var w = WINS[k];
+      var mine = 0, gap = -1;
+      for (var j = 0; j < 3; j++) {
+        if (g[w[j]] === p) mine++;
+        else if (!g[w[j]]) gap = w[j];
+        else { mine = -9; break; }
+      }
+      if (mine === 2 && gap >= 0) return gap;
+    }
+    return -1;
+  }
+
+  function casualMove(g, me) {
+    var win = completing(g, me);
+    if (win >= 0) return win;
+    var block = completing(g, other(me));
+    if (block >= 0 && Math.random() < 0.55) return block;
+    var open = empties(g);
+    return open[Math.floor(Math.random() * open.length)];
+  }
+
+  function strikeThrough(line) {
+    var ns = "http://www.w3.org/2000/svg";
+    var cx = function (i) { return (i % 3) * 100 + 50; };
+    var cy = function (i) { return Math.floor(i / 3) * 100 + 50; };
+    var x1 = cx(line[0]), y1 = cy(line[0]), x2 = cx(line[2]), y2 = cy(line[2]);
+    var dx = x2 - x1, dy = y2 - y1;
+    var m = Math.sqrt(dx * dx + dy * dy);
+    var ex = (dx / m) * 26, ey = (dy / m) * 26;
+    var p = document.createElementNS(ns, "path");
+    p.setAttribute("d", "M" + (x1 - ex) + " " + (y1 - ey) + " L" + (x2 + ex) + " " + (y2 + ey));
+    p.setAttribute("stroke", state.grid[line[0]] === "X" ? "var(--madder)" : "var(--prussian)");
+    strikeEl.appendChild(p);
+    var len = p.getTotalLength();
+    if (reduced) return;
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = "stroke-dashoffset .38s ease-out .3s";
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { p.style.strokeDashoffset = "0"; });
+    });
+  }
+
+  function refreshGhosts() {
+    var show = !state.over && !state.busy && !(state.mode !== "human" && state.turn === "O");
+    boardEl.classList.toggle("locked", !show);
+    for (var k = 0; k < 9; k++) {
+      var cell = cells[k];
+      var old = cell.querySelector(".ghost");
+      if (old) old.remove();
+      if (!state.grid[k]) {
+        cell.disabled = state.over || state.busy;
+        if (show) cell.appendChild(svgMark(state.turn, "ghost"));
+      } else {
+        cell.disabled = true;
+      }
+    }
+  }
+
+  function say(html, muted) {
+    statusEl.innerHTML = html;
+    statusEl.classList.toggle("muted", !!muted);
+  }
+
+  function token(p) {
+    return '<span class="who-' + p.toLowerCase() + '">' + p + "</span>";
+  }
+
+  function updateStatus() {
+    if (state.over) return;
+    if (state.busy) { say("Thinking&hellip;", true); return; }
+    if (state.mode !== "human" && state.turn === "O") { say("Thinking&hellip;", true); return; }
+    say(token(state.turn) + " to play");
+  }
+
+  function finish(result) {
+    state.over = true;
+    if (result.line) {
+      state.scores[result.player]++;
+      strikeThrough(result.line);
+      for (var k = 0; k < 9; k++) {
+        var mk = cells[k].querySelector(".mark");
+        if (mk && result.line.indexOf(k) === -1) mk.classList.add("dim");
+      }
+      say(token(result.player) + " takes the round.");
+    } else {
+      state.scores.D++;
+      say("Drawn &mdash; no line to be had.", true);
+    }
+    scoreEls.X.textContent = state.scores.X;
+    scoreEls.O.textContent = state.scores.O;
+    scoreEls.D.textContent = state.scores.D;
+    state.starter = other(state.starter);
+    refreshGhosts();
+  }
+
+  function place(i, player) {
+    state.grid[i] = player;
+    var cell = cells[i];
+    var g = cell.querySelector(".ghost");
+    if (g) g.remove();
+    var mk = svgMark(player, "mark");
+    cell.appendChild(mk);
+    drawIn(mk);
+    cell.setAttribute("aria-label", "Row " + (Math.floor(i / 3) + 1) + ", column " + ((i % 3) + 1) + ", " + player);
+
+    var w = winnerOf(state.grid);
+    if (w) { refreshGhosts(); finish(w); return; }
+    if (empties(state.grid).length === 0) { refreshGhosts(); finish({ line: null }); return; }
+
+    state.turn = other(player);
+    refreshGhosts();
+    updateStatus();
+    maybeMachineMove();
+  }
+
+  function maybeMachineMove() {
+    if (state.over || state.mode === "human" || state.turn !== "O") return;
+    state.busy = true;
+    refreshGhosts();
+    updateStatus();
+    var delay = reduced ? 0 : 430;
+    setTimeout(function () {
+      if (state.over) { state.busy = false; return; }
+      var i = state.mode === "perfect" ? perfectMove(state.grid.slice(), "O") : casualMove(state.grid.slice(), "O");
+      state.busy = false;
+      place(i, "O");
+    }, delay);
+  }
+
+  function newRound() {
+    state.grid = new Array(9).fill(null);
+    state.over = false;
+    state.busy = false;
+    state.turn = state.starter;
+    strikeEl.innerHTML = "";
+    for (var k = 0; k < 9; k++) {
+      cells[k].innerHTML = "";
+      cells[k].setAttribute("aria-label", "Row " + (Math.floor(k / 3) + 1) + ", column " + ((k % 3) + 1) + ", empty");
+    }
+    refreshGhosts();
+    updateStatus();
+    maybeMachineMove();
+  }
+
+  boardEl.addEventListener("click", function (e) {
+    var cell = e.target.closest(".cell");
+    if (!cell || cell.disabled) return;
+    var i = Number(cell.dataset.index);
+    if (state.grid[i] || state.over || state.busy) return;
+    if (state.mode !== "human" && state.turn === "O") return;
+    place(i, state.turn);
+  });
+
+  boardEl.addEventListener("keydown", function (e) {
+    var map = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 3, ArrowUp: -3 };
+    if (!(e.key in map)) return;
+    var cell = e.target.closest(".cell");
+    if (!cell) return;
+    var i = Number(cell.dataset.index);
+    var next = i + map[e.key];
+    if (e.key === "ArrowRight" && i % 3 === 2) return;
+    if (e.key === "ArrowLeft" && i % 3 === 0) return;
+    if (next < 0 || next > 8) return;
+    e.preventDefault();
+    cells[next].focus();
+  });
+
+  modeBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.mode = btn.dataset.mode;
+      modeBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+      state.starter = "X";
+      state.scores = { X: 0, O: 0, D: 0 };
+      scoreEls.X.textContent = "0";
+      scoreEls.O.textContent = "0";
+      scoreEls.D.textContent = "0";
+      newRound();
+    });
+  });
+
+  document.getElementById("new-round").addEventListener("click", newRound);
+  document.getElementById("reset-scores").addEventListener("click", function () {
+    state.scores = { X: 0, O: 0, D: 0 };
+    scoreEls.X.textContent = "0";
+    scoreEls.O.textContent = "0";
+    scoreEls.D.textContent = "0";
+    state.starter = "X";
+    newRound();
+  });
+
+  // draw the grid rules on load
+  (function () {
+    var paths = document.querySelectorAll(".rules path");
+    for (var k = 0; k < paths.length; k++) {
+      (function (p, idx) {
+        var len = p.getTotalLength();
+        if (reduced) return;
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+        p.style.transition = "stroke-dashoffset .5s ease-out " + (0.1 + idx * 0.11) + "s";
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { p.style.strokeDashoffset = "0"; });
+        });
+      })(paths[k], k);
+    }
+  })();
+
+  modeBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.mode === state.mode)); });
+  newRound();
+})();
+</script>
+</body>
+</html>
