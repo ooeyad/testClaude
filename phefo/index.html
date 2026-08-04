@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHEFO</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="screen" width="960" height="540"></canvas>
+</div>
+
+<noscript>Phefo needs JavaScript enabled.</noscript>
+
+<!-- core -->
+<script src="js/core/util.js"></script>
+<script src="js/core/input.js"></script>
+<script src="js/core/audio.js"></script>
+<script src="js/core/physics.js"></script>
+<script src="js/core/camera.js"></script>
+
+<!-- rendering -->
+<script src="js/render/poses.js"></script>
+<script src="js/render/stickman.js"></script>
+<script src="js/render/fx.js"></script>
+<script src="js/render/backdrop.js"></script>
+
+<!-- combat -->
+<script src="js/combat/weapons.js"></script>
+<script src="js/combat/hitbox.js"></script>
+
+<!-- entities (entity.js must precede its subclasses) -->
+<script src="js/entities/entity.js"></script>
+<script src="js/entities/projectile.js"></script>
+<script src="js/entities/pickup.js"></script>
+<script src="js/entities/phefo.js"></script>
+<script src="js/entities/enemy.js"></script>
+<script src="js/entities/enemies/knifeman.js"></script>
+<script src="js/entities/enemies/swordsman.js"></script>
+<script src="js/entities/enemies/gunman.js"></script>
+<script src="js/entities/enemies/archer.js"></script>
+
+<!-- levels -->
+<script src="js/levels/level.js"></script>
+<script src="js/levels/level01_city.js"></script>
+
+<!-- ui -->
+<script src="js/ui/hud.js"></script>
+<script src="js/ui/menus.js"></script>
+
+<!-- boot -->
+<script src="js/core/game.js"></script>
+</body>
+</html>
