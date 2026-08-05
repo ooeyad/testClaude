@@ -112,10 +112,9 @@ Everything damaging funnels through `P.Combat.applyDamage` (`js/combat/hitbox.js
 
 These are real and were confirmed by running the game; they look like bugs and will mislead you:
 
-- **Blocked hits deal zero damage, not 15%.** In `js/combat/hitbox.js` the blocking branch does `amount *= 0.15` and then `return false` before `target.hp -= amount`. The comment says a guard should "eat most of a frontal hit", so the intent was clearly partial damage. This makes the swordsman fully immune from the front while guarding.
 - **Enemies never engage across a height gap.** `Enemy.update` requires `Math.abs(player.y - this.y) < 120` to acquire a target, so an enemy placed on a high platform will stand there inert. Level `waves` entries must keep enemies within ~120px of the player's plane; `js/levels/level01_city.js` has a comment where this bit.
-- **`Space` is bound to both `JUMP` and `CONFIRM`** (`js/core/input.js`), so a jump tap dismisses the victory/game-over screen and restarts immediately.
 - **Level `bounds.maxY` is tuned, not arbitrary.** In `level01_city.js` it is chosen so the camera's vertical clamp is active while the player stands on the road, which lines the road up with the base of the backdrop skyline (`viewH * 0.80`). Changing `maxY` decouples the playfield from the horizon.
+- **A blocked hit returns `false` from `applyDamage` but still deals damage.** The return value means "was this a clean hit", and callers use it to pick spark-coloured impact FX over blood — it is not a did-any-damage-land flag. Chip damage goes through `Combat.kill`, so a guard can be broken through.
 
 ## tic-tac-toe.html
 
