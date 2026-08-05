@@ -130,7 +130,10 @@ window.Phefo = window.Phefo || {};
   Input.SWAP    = ['KeyQ'];
   Input.RELOAD  = ['KeyR'];
   Input.PAUSE   = ['Escape', 'KeyP'];
-  Input.CONFIRM = ['Enter', 'Space'];
+  // Deliberately NOT Space: Space is JUMP, and sharing it meant the jump you
+  // were holding as you died instantly dismissed the game-over screen and
+  // restarted the run. Every menu prompt says ENTER for the same reason.
+  Input.CONFIRM = ['Enter'];
 
   Input.axisX = function () {
     var x = 0;

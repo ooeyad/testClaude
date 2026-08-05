@@ -68,6 +68,9 @@ window.Phefo = window.Phefo || {};
       if (target.invuln > 0) return false;
 
       // A raised guard eats most of a frontal hit and sprays sparks instead.
+      // The remaining 15% still lands: chip damage is what keeps a guard from
+      // being an infinite wall, and it is the reason trading into a swordsman's
+      // block is a losing exchange rather than a stalemate.
       if (target.blocking && opts.dirX && opts.dirX === -target.facing) {
         amount *= 0.15;
         target.blockStun = 0.28;
@@ -75,6 +78,12 @@ window.Phefo = window.Phefo || {};
         P.Audio.play('block');
         if (world) world.hitstop = Math.max(world.hitstop, 0.035);
         target.vx += (opts.knock || 0) * 0.25 * opts.dirX;
+
+        target.hp -= amount;
+        target.lastHitDir = opts.dirX;
+        if (target.hp <= 0) this.kill(target, opts);
+        // Still false: the caller uses this to pick spark-coloured impact FX
+        // over blood, and a guarded hit should read as deflected.
         return false;
       }
 
@@ -93,18 +102,25 @@ window.Phefo = window.Phefo || {};
       if (world) world.hitstop = Math.max(world.hitstop, opts.melee ? 0.055 : 0.03);
 
       if (target.hp <= 0) {
-        target.hp = 0;
-        if (!target.dead) {
-          target.dead = true;
-          target.deathT = 0;
-          if (target.onDeath) target.onDeath(opts);
-        }
+        this.kill(target, opts);
       } else {
         target.stagger = Math.max(target.stagger || 0, opts.melee ? 0.24 : 0.14);
         P.Audio.play(target.isPlayer ? 'hurt' : 'hit');
       }
 
       return true;
+    },
+
+    /**
+     * Single place that flips an entity to dead. Chip damage through a guard can
+     * finish someone off too, so this cannot live inline in the main damage path.
+     */
+    kill: function (target, opts) {
+      target.hp = 0;
+      if (target.dead) return;
+      target.dead = true;
+      target.deathT = 0;
+      if (target.onDeath) target.onDeath(opts);
     },
 
     /**
