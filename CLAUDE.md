@@ -34,21 +34,17 @@ If a change is already committed on `main` by mistake, move it: branch off the c
 
 ## Repository shape
 
-Two unrelated, dependency-free browser projects share this repo:
-
-- `phefo/` — a canvas action game (the substantial codebase)
-- `tic-tac-toe.html` — a single self-contained file
+The repo holds one project: `phefo/`, a dependency-free canvas action game.
 
 There is no `package.json`, no build step, no bundler, no test framework, and no linter config. Nothing is transpiled; the `.js` files on disk are exactly what the browser executes. Do not introduce tooling unless asked — the "double-click a folder and it runs" property is deliberate and is why the game synthesizes its audio and draws its art at runtime instead of loading assets.
 
 ## Running
 
-Both projects use classic `<script>` tags with no `fetch`/`import`, so `file://` works. A static server is still the cleaner path:
+The game uses classic `<script>` tags with no `fetch`/`import`, so `file://` works. A static server is still the cleaner path:
 
 ```bash
 python -m http.server 8123 --bind 127.0.0.1   # from the repo root
 # http://127.0.0.1:8123/phefo/index.html
-# http://127.0.0.1:8123/tic-tac-toe.html
 ```
 
 Syntax-check every script the game actually loads, in load order:
@@ -115,7 +111,3 @@ These are real and were confirmed by running the game; they look like bugs and w
 - **Enemies never engage across a height gap.** `Enemy.update` requires `Math.abs(player.y - this.y) < 120` to acquire a target, so an enemy placed on a high platform will stand there inert. Level `waves` entries must keep enemies within ~120px of the player's plane; `js/levels/level01_city.js` has a comment where this bit.
 - **Level `bounds.maxY` is tuned, not arbitrary.** In `level01_city.js` it is chosen so the camera's vertical clamp is active while the player stands on the road, which lines the road up with the base of the backdrop skyline (`viewH * 0.80`). Changing `maxY` decouples the playfield from the horizon.
 - **A blocked hit returns `false` from `applyDamage` but still deals damage.** The return value means "was this a clean hit", and callers use it to pick spark-coloured impact FX over blood — it is not a did-any-damage-land flag. Chip damage goes through `Combat.kill`, so a guard can be broken through.
-
-## tic-tac-toe.html
-
-Self-contained: inline `<style>` and `<script>`, no external references, no shared code with `phefo/`. Marks are SVG paths drawn with a stroke animation. Three modes selected by `data-mode` buttons — `human`, `casual`, and `perfect` (full minimax); `casual` deliberately plays imperfectly. Light/dark is driven by `:root[data-theme]`.
