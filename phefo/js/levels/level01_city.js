@@ -82,17 +82,27 @@ window.Phefo = window.Phefo || {};
         { type: 'knifeman', x: 1050 },
         { type: 'gunman',   x: 1360 }
       ],
+      // The climber arrives alone and next to a ladder, because the mechanic has
+      // to be taught before it can be used against you. This wave is meant to be
+      // easy — its job is to be watched, not to threaten.
+      [
+        { type: 'climber',  x: 900 }
+      ],
       [
         { type: 'brute',     x: 380 },
         { type: 'swordsman', x: 900 },
         { type: 'knifeman',  x: 1180 },
         { type: 'archer',    x: 1700 }
       ],
+      // From here climbers are added on top rather than replacing anyone: the
+      // late game is deliberately harder than it was, and a climber only applies
+      // real pressure while you are busy with something else.
       [
         { type: 'gunman',   x: 820 },
         { type: 'knifeman', x: 1120 },
         { type: 'knifeman', x: 1260 },
-        { type: 'gunman',   x: 1520 }
+        { type: 'gunman',   x: 1520 },
+        { type: 'climber',  x: 1450 }
       ],
       [
         { type: 'swordsman', x: 1000 },
@@ -100,6 +110,7 @@ window.Phefo = window.Phefo || {};
         { type: 'brute',     x: 1790 },
         // Kept on the road: Enemy only acquires a target within 120px of its own
         // height, so an archer parked on the walkway would never open fire.
+        { type: 'climber',   x: 1880 },
         { type: 'archer',    x: 1950 },
         { type: 'gunman',    x: 2260 }
       ]
