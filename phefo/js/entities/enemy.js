@@ -287,6 +287,9 @@ window.Phefo = window.Phefo || {};
   P.Enemies.spawn = function (type, x, y) {
     var cfg = P.Enemies.registry[type];
     if (!cfg) throw new Error('Unknown enemy type: ' + type);
-    return new P.Enemy(x, y, cfg);
+    // A type may name its own constructor when it needs behaviour the shared
+    // state machine cannot express. Types that do not are built as before.
+    var Ctor = cfg.ctor || P.Enemy;
+    return new Ctor(x, y, cfg);
   };
 })(window.Phefo);
