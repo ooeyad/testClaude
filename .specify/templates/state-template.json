@@ -1,0 +1,34 @@
+{
+  "id": "000",
+  "slug": "template",
+  "name": "",
+  "tier": "standard",
+  "tierReason": "",
+  "phase": "specify",
+  "branch": "",
+  "gates": {
+    "specification": { "required": true,  "status": "pending" },
+    "design":        { "required": false, "status": "n/a" },
+    "release":       { "required": true,  "status": "pending" }
+  },
+  "artifacts": {
+    "spec.md":        { "required": true,  "exists": false, "cap": 100 },
+    "plan.md":        { "required": true,  "exists": false, "cap": 120 },
+    "tasks.md":       { "required": true,  "exists": false, "cap": 100 },
+    "research.md":    { "required": false, "exists": false, "cap": 80 },
+    "data-model.md":  { "required": false, "exists": false, "cap": 100 },
+    "contracts/":     { "required": false, "exists": false, "cap": null },
+    "quickstart.md":  { "required": true,  "exists": false, "cap": 60 }
+  },
+  "clarifications": { "open": 0, "resolved": 0 },
+  "contextGaps": [],
+  "readSets": {
+    "always":      [".specify/memory/project-context/index.md", ".specify/memory/project-context/invariants.md", ".specify/memory/constitution.md"],
+    "specifier":   ["spec.md"],
+    "planner":     ["spec.md", "plan.md", ".specify/memory/project-context/architecture.md", ".specify/memory/project-context/domain.md"],
+    "implementer": ["state.json", "tasks.md#<current task>"],
+    "analyzer":    ["spec.md", "plan.md", "tasks.md", "quickstart.md", "<diff>"]
+  },
+  "budget": { "targetTokens": 80000, "spentTokens": null, "artifactBytes": null },
+  "updated": ""
+}

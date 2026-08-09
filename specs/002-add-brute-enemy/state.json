@@ -1,0 +1,134 @@
+{
+  "id": "002",
+  "slug": "add-brute-enemy",
+  "name": "Brute Enemy",
+  "tier": "standard",
+  "tierReason": "3 files, one new file; no shared contract changed; reversible; no new dependency",
+  "phase": "analyze",
+  "branch": "feat/002-add-brute-enemy",
+  "status": "implemented and committed (aa0359e); release gate pending; RV-002 open",
+  "gates": {
+    "specification": {
+      "required": true,
+      "status": "approved",
+      "by": "Project Owner",
+      "at": "2026-08-09"
+    },
+    "design": {
+      "required": false,
+      "status": "n/a"
+    },
+    "release": {
+      "required": true,
+      "status": "pending"
+    }
+  },
+  "artifacts": {
+    "spec.md": {
+      "required": true,
+      "exists": true,
+      "cap": 100
+    },
+    "plan.md": {
+      "required": true,
+      "exists": true,
+      "cap": 120
+    },
+    "tasks.md": {
+      "required": true,
+      "exists": true,
+      "cap": 100
+    },
+    "research.md": {
+      "required": false,
+      "exists": false,
+      "cap": 80
+    },
+    "data-model.md": {
+      "required": false,
+      "exists": false,
+      "cap": 100
+    },
+    "contracts/": {
+      "required": false,
+      "exists": false,
+      "cap": null
+    },
+    "quickstart.md": {
+      "required": true,
+      "exists": true,
+      "cap": 60
+    },
+    "analysis.md": {
+      "required": true,
+      "exists": true,
+      "cap": 100
+    }
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "Brute definition and load order",
+      "status": "done",
+      "touches": [
+        "phefo/js/entities/enemies/brute.js",
+        "phefo/index.html"
+      ]
+    },
+    {
+      "id": "T002",
+      "title": "Encounter placement",
+      "status": "done",
+      "touches": [
+        "phefo/js/levels/level01_city.js"
+      ]
+    },
+    {
+      "id": "T003",
+      "title": "Headless validation and evidence",
+      "status": "done",
+      "touches": []
+    }
+  ],
+  "clarifications": {
+    "open": 0,
+    "resolved": 6
+  },
+  "contextGaps": [],
+  "openFindings": [
+    "RV-002"
+  ],
+  "readSets": {
+    "always": [
+      ".specify/memory/project-context/index.md",
+      ".specify/memory/project-context/invariants.md",
+      ".specify/memory/constitution.md"
+    ],
+    "specifier": [
+      "spec.md"
+    ],
+    "planner": [
+      "spec.md",
+      "plan.md",
+      ".specify/memory/project-context/architecture.md",
+      ".specify/memory/project-context/domain.md"
+    ],
+    "implementer": [
+      "state.json",
+      "tasks.md#<current task>"
+    ],
+    "analyzer": [
+      "spec.md",
+      "plan.md",
+      "tasks.md",
+      "quickstart.md",
+      "<diff>"
+    ]
+  },
+  "budget": {
+    "targetTokens": 80000,
+    "spentTokens": null,
+    "artifactBytes": null
+  },
+  "updated": "2026-08-09"
+}
