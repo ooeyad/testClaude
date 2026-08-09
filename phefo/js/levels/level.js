@@ -12,6 +12,10 @@ window.Phefo = window.Phefo || {};
    *
    * Solids are the rects Physics already understands — {x, y, w, h, oneWay?} —
    * so there is no level-specific collision code anywhere.
+   *
+   * Ladders are a separate collection and deliberately not solids: Physics never
+   * sees them, so adding one cannot change collision for anything that already
+   * exists. Only climbing enemies read them.
    */
 
   var Levels = {
@@ -110,6 +114,49 @@ window.Phefo = window.Phefo || {};
       }
 
       if (def.decor) def.decor(ctx, cam, U);
+    },
+
+    /**
+     * Ladders. Drawn after the solids and before the actors, so a climber reads
+     * as being in front of the rungs rather than behind them.
+     *
+     * Two rails and evenly spaced rungs — enough for the shape to be
+     * unmistakable at a glance, which matters because the ladder is the only
+     * cue the player gets for how an enemy reached their platform.
+     */
+    drawLadders: function (ctx, def, cam) {
+      var list = def.ladders;
+      if (!list || !list.length) return;
+
+      var HALF = 9;    // half the distance between the rails
+      var RUNG = 15;   // vertical spacing
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = def.ladderColor || '#7c8b95';
+
+      for (var i = 0; i < list.length; i++) {
+        var l = list[i];
+        if (l.x + HALF < cam.x - 40 || l.x - HALF > cam.x + cam.viewW + 40) continue;
+
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.moveTo(l.x - HALF, l.top);
+        ctx.lineTo(l.x - HALF, l.bottom);
+        ctx.moveTo(l.x + HALF, l.top);
+        ctx.lineTo(l.x + HALF, l.bottom);
+        ctx.stroke();
+
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var y = l.top + RUNG * 0.5; y < l.bottom; y += RUNG) {
+          ctx.moveTo(l.x - HALF, y);
+          ctx.lineTo(l.x + HALF, y);
+        }
+        ctx.stroke();
+      }
+
+      ctx.restore();
     }
   };
 

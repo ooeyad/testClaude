@@ -179,6 +179,7 @@ window.Phefo = window.Phefo || {};
     cam.apply(ctx);
 
     P.Levels.drawSolids(ctx, this.def, cam);
+    P.Levels.drawLadders(ctx, this.def, cam);
 
     for (i = 0; i < this.pickups.length; i++) {
       if (cam.visible(this.pickups[i].x, this.pickups[i].y, 60)) this.pickups[i].draw(ctx);
