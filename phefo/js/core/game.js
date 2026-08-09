@@ -23,6 +23,9 @@ window.Phefo = window.Phefo || {};
   function World(def) {
     this.def = def;
     this.solids = def.solids;
+    // Ladders are deliberately outside `solids` — Physics never sees them, so a
+    // level that defines none is indistinguishable from one that cannot have any.
+    this.ladders = def.ladders || [];
     this.bounds = def.bounds;
     this.groundY = def.groundY;
     this.waves = def.waves;
