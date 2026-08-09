@@ -68,6 +68,7 @@ window.Phefo = window.Phefo || {};
         { type: 'gunman',   x: 1360 }
       ],
       [
+        { type: 'brute',     x: 380 },
         { type: 'swordsman', x: 900 },
         { type: 'knifeman',  x: 1180 },
         { type: 'archer',    x: 1700 }
@@ -81,6 +82,7 @@ window.Phefo = window.Phefo || {};
       [
         { type: 'swordsman', x: 1000 },
         { type: 'swordsman', x: 1620 },
+        { type: 'brute',     x: 1790 },
         // Kept on the road: Enemy only acquires a target within 120px of its own
         // height, so an archer parked on the walkway would never open fire.
         { type: 'archer',    x: 1950 },
