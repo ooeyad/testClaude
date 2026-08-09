@@ -23,6 +23,9 @@ window.Phefo = window.Phefo || {};
   function World(def) {
     this.def = def;
     this.solids = def.solids;
+    // Ladders are deliberately outside `solids` — Physics never sees them, so a
+    // level that defines none is indistinguishable from one that cannot have any.
+    this.ladders = def.ladders || [];
     this.bounds = def.bounds;
     this.groundY = def.groundY;
     this.waves = def.waves;
@@ -179,6 +182,7 @@ window.Phefo = window.Phefo || {};
     cam.apply(ctx);
 
     P.Levels.drawSolids(ctx, this.def, cam);
+    P.Levels.drawLadders(ctx, this.def, cam);
 
     for (i = 0; i < this.pickups.length; i++) {
       if (cam.visible(this.pickups[i].x, this.pickups[i].y, 60)) this.pickups[i].draw(ctx);

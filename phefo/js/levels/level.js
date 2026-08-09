@@ -12,6 +12,10 @@ window.Phefo = window.Phefo || {};
    *
    * Solids are the rects Physics already understands — {x, y, w, h, oneWay?} —
    * so there is no level-specific collision code anywhere.
+   *
+   * Ladders are a separate collection and deliberately not solids: Physics never
+   * sees them, so adding one cannot change collision for anything that already
+   * exists. Only climbing enemies read them.
    */
 
   var Levels = {
@@ -43,6 +47,25 @@ window.Phefo = window.Phefo || {};
      */
     platform: function (x, y, w) {
       return { x: x, y: y, w: w, h: 10, oneWay: true };
+    },
+
+    /**
+     * Ladder: a vertical route between two surfaces, for climbing enemies.
+     *
+     * Deliberately not a solid, and never placed in `def.solids` — that array is
+     * read every step by Physics for every entity and by projectiles, so a ladder
+     * in it would change collision for the player and every existing enemy.
+     * Ladders live in their own `def.ladders` collection.
+     *
+     * `top` and `bottom` are the y of the surfaces where feet rest at each end,
+     * not decorative extents — a climber is clamped to them on arrival. `top` is
+     * the smaller value, because y grows downward.
+     *
+     * Placement is governed by the level-authoring rules in the EO-001
+     * architecture (§10); they are deliberately not enforced here.
+     */
+    ladder: function (x, top, bottom) {
+      return { x: x, top: top, bottom: bottom };
     },
 
     /**
@@ -91,6 +114,49 @@ window.Phefo = window.Phefo || {};
       }
 
       if (def.decor) def.decor(ctx, cam, U);
+    },
+
+    /**
+     * Ladders. Drawn after the solids and before the actors, so a climber reads
+     * as being in front of the rungs rather than behind them.
+     *
+     * Two rails and evenly spaced rungs — enough for the shape to be
+     * unmistakable at a glance, which matters because the ladder is the only
+     * cue the player gets for how an enemy reached their platform.
+     */
+    drawLadders: function (ctx, def, cam) {
+      var list = def.ladders;
+      if (!list || !list.length) return;
+
+      var HALF = 9;    // half the distance between the rails
+      var RUNG = 15;   // vertical spacing
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = def.ladderColor || '#7c8b95';
+
+      for (var i = 0; i < list.length; i++) {
+        var l = list[i];
+        if (l.x + HALF < cam.x - 40 || l.x - HALF > cam.x + cam.viewW + 40) continue;
+
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.moveTo(l.x - HALF, l.top);
+        ctx.lineTo(l.x - HALF, l.bottom);
+        ctx.moveTo(l.x + HALF, l.top);
+        ctx.lineTo(l.x + HALF, l.bottom);
+        ctx.stroke();
+
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var y = l.top + RUNG * 0.5; y < l.bottom; y += RUNG) {
+          ctx.moveTo(l.x - HALF, y);
+          ctx.lineTo(l.x + HALF, y);
+        }
+        ctx.stroke();
+      }
+
+      ctx.restore();
     }
   };
 

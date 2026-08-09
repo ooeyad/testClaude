@@ -145,6 +145,34 @@ window.Phefo = window.Phefo || {};
       return p;
     },
 
+    /**
+     * On a ladder. Opposite limbs reach together — near arm with far leg — which
+     * is the whole reason a climb reads as climbing rather than as scrabbling.
+     * The torso stays near-vertical because the figure is hanging, not walking.
+     */
+    climb: function (ph) {
+      var p = base();
+      var s = Math.sin(ph);
+
+      p.torso = 0.02;
+      p.headTilt = -0.12;
+
+      // Arms overhead, alternating on the rungs.
+      p.shoulderN = -2.45 + s * 0.42;
+      p.elbowN = -0.30 - Math.max(0, s) * 0.42;
+      p.shoulderF = -2.45 - s * 0.42;
+      p.elbowF = -0.30 - Math.max(0, -s) * 0.42;
+
+      // Legs opposite the arms, knees always folded — feet never straighten on
+      // a ladder the way they do at the end of a stride.
+      p.hipN = 0.30 - s * 0.42;
+      p.kneeN = -0.75 - Math.max(0, -s) * 0.45;
+      p.hipF = 0.30 + s * 0.42;
+      p.kneeF = -0.75 - Math.max(0, s) * 0.45;
+
+      return p;
+    },
+
     /** Wind-up tell before an enemy attacks — deliberately exaggerated. */
     telegraph: function (prog, ranged) {
       var p = base();

@@ -4,7 +4,7 @@ window.Phefo = window.Phefo || {};
   'use strict';
 
   var L = P.Levels;
-  var solid = L.solid, platform = L.platform;
+  var solid = L.solid, platform = L.platform, ladder = L.ladder;
 
   /**
    * One long street at sundown. The layout alternates open road (where gunmen
@@ -52,6 +52,21 @@ window.Phefo = window.Phefo || {};
       solid(2320, -52, 60, 52)
     ],
 
+    /**
+     * Ladders from the road up to three of the fire escapes. Each is inset well
+     * clear of its platform's edges — an enemy walking to a ladder flush with an
+     * edge would stop short, because Enemy.walk refuses to step where its probe
+     * finds no ground, and descent would never trigger.
+     *
+     * None crosses a solid block: a climber passes through geometry while
+     * attached, so a ladder over a crate would let it climb through the crate.
+     */
+    ladders: [
+      ladder(740, -152, 0),    // fire escape at 700..900
+      ladder(1450, -128, 0),   // fire escape at 1420..1576
+      ladder(1880, -196, 0)    // high walkway at 1850..2060
+    ],
+
     pickups: [
       { kind: 'bow', x: 800, y: -152 },
       { kind: 'health', x: 1712, y: -62 }
@@ -67,17 +82,27 @@ window.Phefo = window.Phefo || {};
         { type: 'knifeman', x: 1050 },
         { type: 'gunman',   x: 1360 }
       ],
+      // The climber arrives alone and next to a ladder, because the mechanic has
+      // to be taught before it can be used against you. This wave is meant to be
+      // easy — its job is to be watched, not to threaten.
+      [
+        { type: 'climber',  x: 900 }
+      ],
       [
         { type: 'brute',     x: 380 },
         { type: 'swordsman', x: 900 },
         { type: 'knifeman',  x: 1180 },
         { type: 'archer',    x: 1700 }
       ],
+      // From here climbers are added on top rather than replacing anyone: the
+      // late game is deliberately harder than it was, and a climber only applies
+      // real pressure while you are busy with something else.
       [
         { type: 'gunman',   x: 820 },
         { type: 'knifeman', x: 1120 },
         { type: 'knifeman', x: 1260 },
-        { type: 'gunman',   x: 1520 }
+        { type: 'gunman',   x: 1520 },
+        { type: 'climber',  x: 1450 }
       ],
       [
         { type: 'swordsman', x: 1000 },
@@ -85,6 +110,7 @@ window.Phefo = window.Phefo || {};
         { type: 'brute',     x: 1790 },
         // Kept on the road: Enemy only acquires a target within 120px of its own
         // height, so an archer parked on the walkway would never open fire.
+        { type: 'climber',   x: 1880 },
         { type: 'archer',    x: 1950 },
         { type: 'gunman',    x: 2260 }
       ]
