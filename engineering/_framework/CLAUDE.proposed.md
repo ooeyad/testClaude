@@ -1,3 +1,7 @@
+<!-- PROPOSED replacement for the repo root CLAUDE.md.
+     Review, then move to ./CLAUDE.md. The architecture and quirks prose that was
+     here now lives in engineering/project-context/, where it is versioned,
+     capped, reused by every opportunity, and loaded only when relevant. -->
 # CLAUDE.md
 
 Guidance for AI agents working in this repository.

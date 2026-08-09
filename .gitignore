@@ -1,2 +1,5 @@
 # Claude Code local settings (personal, machine-specific)
 .claude/settings.local.json
+
+# Staging area for files removed from the working tree (delete it yourself)
+_to_delete/

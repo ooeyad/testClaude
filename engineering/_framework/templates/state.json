@@ -1,0 +1,26 @@
+{
+  "id": "EO-000",
+  "slug": "template",
+  "title": "",
+  "tier": "standard",
+  "tierReason": "",
+  "phase": "brief",
+  "branch": "",
+  "budgetTokens": 80000,
+  "gates": {
+    "scope":   { "required": true,  "status": "pending" },
+    "design":  { "required": false, "status": "n/a" },
+    "release": { "required": true,  "status": "pending" }
+  },
+  "wp": [],
+  "context": {
+    "always":    ["engineering/project-context/index.md", "engineering/project-context/invariants.md", "engineering/standards.md"],
+    "analyst":   ["brief.md"],
+    "architect": ["brief.md", "decisions.md", "engineering/project-context/architecture.md", "engineering/project-context/domain.md"],
+    "engineer":  ["state.json", "wp/<current>.md"],
+    "reviewer":  ["wp/<current>.md", "brief.md#success-criteria", "plan.md#validation-gates"]
+  },
+  "openQuestions": 0,
+  "ctxGaps": [],
+  "updated": ""
+}
