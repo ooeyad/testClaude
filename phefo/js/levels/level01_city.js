@@ -4,7 +4,7 @@ window.Phefo = window.Phefo || {};
   'use strict';
 
   var L = P.Levels;
-  var solid = L.solid, platform = L.platform;
+  var solid = L.solid, platform = L.platform, ladder = L.ladder;
 
   /**
    * One long street at sundown. The layout alternates open road (where gunmen
@@ -50,6 +50,21 @@ window.Phefo = window.Phefo || {};
 
       solid(2140, -118, 140, 118),
       solid(2320, -52, 60, 52)
+    ],
+
+    /**
+     * Ladders from the road up to three of the fire escapes. Each is inset well
+     * clear of its platform's edges — an enemy walking to a ladder flush with an
+     * edge would stop short, because Enemy.walk refuses to step where its probe
+     * finds no ground, and descent would never trigger.
+     *
+     * None crosses a solid block: a climber passes through geometry while
+     * attached, so a ladder over a crate would let it climb through the crate.
+     */
+    ladders: [
+      ladder(740, -152, 0),    // fire escape at 700..900
+      ladder(1450, -128, 0),   // fire escape at 1420..1576
+      ladder(1880, -196, 0)    // high walkway at 1850..2060
     ],
 
     pickups: [
