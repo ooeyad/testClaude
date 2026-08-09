@@ -102,7 +102,9 @@ window.Phefo = window.Phefo || {};
 
       var up = Math.abs(l.bottom - mine.y) <= LEVEL_TOL &&
                Math.abs(l.top - theirs.y) <= LEVEL_TOL;
-      if (!up) continue;
+      var down = Math.abs(l.top - mine.y) <= LEVEL_TOL &&
+                 Math.abs(l.bottom - theirs.y) <= LEVEL_TOL;
+      if (!up && !down) continue;
 
       if (d < bestD) { bestD = d; best = l; }
     }
@@ -232,6 +234,15 @@ window.Phefo = window.Phefo || {};
 
     if (this.mode === 'approach') this.updateApproach(dt, world);
     else if (this.mode === 'climb') this.updateClimb(dt, world);
+  };
+
+  /**
+   * Climbing has its own pose; everything else is the parent's, so a climber on
+   * the ground looks exactly like what it fights like.
+   */
+  Climber.prototype.pose = function (world) {
+    if (this.ladder) return P.Poses.climb(this.climbPhase);
+    return P.Enemy.prototype.pose.call(this, world);
   };
 
   Climber.LEVEL_TOL = LEVEL_TOL;
