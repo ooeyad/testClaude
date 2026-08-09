@@ -46,6 +46,25 @@ window.Phefo = window.Phefo || {};
     },
 
     /**
+     * Ladder: a vertical route between two surfaces, for climbing enemies.
+     *
+     * Deliberately not a solid, and never placed in `def.solids` — that array is
+     * read every step by Physics for every entity and by projectiles, so a ladder
+     * in it would change collision for the player and every existing enemy.
+     * Ladders live in their own `def.ladders` collection.
+     *
+     * `top` and `bottom` are the y of the surfaces where feet rest at each end,
+     * not decorative extents — a climber is clamped to them on arrival. `top` is
+     * the smaller value, because y grows downward.
+     *
+     * Placement is governed by the level-authoring rules in the EO-001
+     * architecture (§10); they are deliberately not enforced here.
+     */
+    ladder: function (x, top, bottom) {
+      return { x: x, top: top, bottom: bottom };
+    },
+
+    /**
      * Scenery pass for the play-field geometry. Drawn inside the camera
      * transform, between the backdrop and the characters.
      *
