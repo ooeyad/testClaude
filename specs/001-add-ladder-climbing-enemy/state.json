@@ -1,0 +1,169 @@
+{
+  "id": "001",
+  "slug": "add-ladder-climbing-enemy",
+  "name": "Ladder-Climbing Enemy",
+  "tier": "deep",
+  "tierReason": "Shared contract changed (Enemy.spawn); new climb subsystem; 8 files; INV-7 changed for the new type",
+  "phase": "analyze",
+  "branch": "feat/001-add-ladder-climbing-enemy",
+  "status": "T001\u2013T012 implemented and merged in PR #9; T013 (tuning, checklist, evidence) outstanding; release gate open",
+  "gates": {
+    "specification": {
+      "required": true,
+      "status": "approved",
+      "by": "Project Owner",
+      "at": "2026-08-06"
+    },
+    "design": {
+      "required": true,
+      "status": "approved",
+      "by": "Project Owner",
+      "at": "2026-08-07"
+    },
+    "release": {
+      "required": true,
+      "status": "pending"
+    }
+  },
+  "artifacts": {
+    "spec.md": {
+      "required": true,
+      "exists": true,
+      "cap": 120
+    },
+    "plan.md": {
+      "required": true,
+      "exists": true,
+      "cap": 150
+    },
+    "tasks.md": {
+      "required": true,
+      "exists": true,
+      "cap": 140
+    },
+    "research.md": {
+      "required": false,
+      "exists": false,
+      "cap": 80
+    },
+    "data-model.md": {
+      "required": false,
+      "exists": false,
+      "cap": 100
+    },
+    "contracts/": {
+      "required": false,
+      "exists": false,
+      "cap": null
+    },
+    "quickstart.md": {
+      "required": true,
+      "exists": true,
+      "cap": 60
+    }
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "status": "done",
+      "commit": "f46acd2"
+    },
+    {
+      "id": "T002",
+      "status": "done",
+      "commit": "781547a"
+    },
+    {
+      "id": "T003",
+      "status": "done",
+      "commit": "fc0a152"
+    },
+    {
+      "id": "T004",
+      "status": "done",
+      "commit": "fa80174"
+    },
+    {
+      "id": "T005",
+      "status": "done",
+      "commit": "450a4fe"
+    },
+    {
+      "id": "T006",
+      "status": "done",
+      "commit": "7d45538"
+    },
+    {
+      "id": "T007",
+      "status": "done",
+      "commit": "5d8833e"
+    },
+    {
+      "id": "T008",
+      "status": "done",
+      "commit": "e71d964"
+    },
+    {
+      "id": "T009",
+      "status": "done",
+      "commit": "e71d964"
+    },
+    {
+      "id": "T010",
+      "status": "done",
+      "commit": "0f31eda"
+    },
+    {
+      "id": "T011",
+      "status": "done",
+      "commit": "0f31eda"
+    },
+    {
+      "id": "T012",
+      "status": "done",
+      "commit": "b5eeb58"
+    },
+    {
+      "id": "T013",
+      "status": "todo"
+    }
+  ],
+  "clarifications": {
+    "open": 0,
+    "resolved": 12
+  },
+  "contextGaps": [],
+  "readSets": {
+    "always": [
+      ".specify/memory/project-context/index.md",
+      ".specify/memory/project-context/invariants.md",
+      ".specify/memory/constitution.md"
+    ],
+    "specifier": [
+      "spec.md"
+    ],
+    "planner": [
+      "spec.md",
+      "plan.md",
+      ".specify/memory/project-context/architecture.md",
+      ".specify/memory/project-context/domain.md"
+    ],
+    "implementer": [
+      "state.json",
+      "tasks.md#<current task>"
+    ],
+    "analyzer": [
+      "spec.md",
+      "plan.md",
+      "tasks.md",
+      "quickstart.md",
+      "<diff>"
+    ]
+  },
+  "budget": {
+    "targetTokens": 250000,
+    "spentTokens": null,
+    "artifactBytes": null
+  },
+  "updated": "2026-08-09"
+}
