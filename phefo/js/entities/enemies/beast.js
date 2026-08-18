@@ -46,7 +46,7 @@ window.Phefo = window.Phefo || {};
     speed: 66,          // px/s — slower than the brute's 78. It never wins a race
     aggro: 900,         // px — commits from across the segment
     sight: 240,         // px vertical — clears the 196 px walkway overhead
-    scale: 2.15,        // 112 px tall against the brute's 64
+    scale: 2.00,        // 104 px tall against the brute's 64
     lineWidth: 4.6,     // px — a body this size drawn at 3.0 reads as wire
     knockScale: 0.05,
 
