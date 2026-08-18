@@ -81,7 +81,9 @@ window.Phefo = window.Phefo || {};
     var d = pl.x - this.x;
     var ad = Math.abs(d);
     var dir = d >= 0 ? 1 : -1;
-    var canSee = !pl.dead && Math.abs(pl.y - this.y) < 120 && ad < cfg.aggro;
+    // `sight` is vertical awareness in px. It defaults to the 120 every type has
+    // always had, so a type that omits it engages exactly as it did before.
+    var canSee = !pl.dead && Math.abs(pl.y - this.y) < (cfg.sight || 120) && ad < cfg.aggro;
 
     if (canSee) this.alerted = true;
     // Once alerted, keep pursuing a bit past the aggro range so enemies don't
@@ -241,7 +243,7 @@ window.Phefo = window.Phefo || {};
       facing: this.facing,
       scale: this.scale,
       color: color,
-      lineWidth: 3.0,
+      lineWidth: cfg.lineWidth || 3.0,
       groundLock: this.onGround && !this.dead,
       weapon: cfg.weapon,
       flash: this.flash
