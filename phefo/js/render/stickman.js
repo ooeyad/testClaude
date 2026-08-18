@@ -26,29 +26,83 @@ window.Phefo = window.Phefo || {};
 
   var NOMINAL_HIP = (B.THIGH + B.SHIN) * 0.95;
 
-  /** Forward kinematics: angles -> points, with the pelvis at the origin. */
-  function build(pose) {
+  /**
+   * Sole to crown of a fully extended figure — the one measure a build preserves.
+   *
+   * Deliberately the straight-legged height, not the bent-legged one: it is the
+   * only height that is a property of the bones alone rather than of whichever
+   * pose is being drawn, so normalising against it holds in every pose. Bending
+   * shortens a long leg and a short leg in the same proportion.
+   */
+  function standingHeight(b) {
+    return b.THIGH + b.SHIN + b.PELVIS_CHEST + b.CHEST_NECK +
+           b.NECK_HEAD + b.HEAD_R * 2;
+  }
+
+  var NOMINAL_HEIGHT = standingHeight(B);
+
+  /**
+   * Turn a build — multipliers over the shared table — into a bone set.
+   *
+   * **Shape, never size.** The multipliers are applied and the whole set is then
+   * rescaled to the standing height the character already had, so a creature can
+   * be squat, spindly or long-armed without moving anything the game measures.
+   * That matters more than it looks: the collision box is 52 x scale and is
+   * computed from `scale` alone, and melee reach, the health bar and the camera
+   * all derive from it. A body drawn taller than its box gets struck where it
+   * does not appear to be. Size is `scale`'s job; this is only shape.
+   */
+  function bonesFor(spec) {
+    if (!spec) return B;
+
+    var b = {
+      PELVIS_CHEST: B.PELVIS_CHEST * (spec.torso || 1),
+      CHEST_NECK: B.CHEST_NECK * (spec.neck || 1),
+      NECK_HEAD: B.NECK_HEAD * (spec.neck || 1),
+      HEAD_R: B.HEAD_R * (spec.head || 1),
+      UPPER_ARM: B.UPPER_ARM * (spec.arm || 1),
+      FOREARM: B.FOREARM * (spec.arm || 1) * (spec.forearm || 1),
+      THIGH: B.THIGH * (spec.leg || 1),
+      SHIN: B.SHIN * (spec.leg || 1) * (spec.shin || 1)
+    };
+
+    var fit = NOMINAL_HEIGHT / standingHeight(b);
+    for (var k in b) {
+      if (Object.prototype.hasOwnProperty.call(b, k)) b[k] *= fit;
+    }
+
+    b.hip = (b.THIGH + b.SHIN) * 0.95;
+    return b;
+  }
+
+  /**
+   * Forward kinematics: angles -> points, with the pelvis at the origin.
+   * `b` is the character's own bone set; omitted means the shared one, which is
+   * what keeps every existing caller drawing exactly as it did.
+   */
+  function build(pose, b) {
+    b = b || B;
     var j = {};
     var t = pose.torso;
 
     j.pelvis = { x: pose.lunge || 0, y: 0 };
 
-    var chest = up(B.PELVIS_CHEST, t);
+    var chest = up(b.PELVIS_CHEST, t);
     j.chest = { x: j.pelvis.x + chest.x, y: j.pelvis.y + chest.y };
 
-    var neck = up(B.CHEST_NECK, t);
+    var neck = up(b.CHEST_NECK, t);
     j.neck = { x: j.chest.x + neck.x, y: j.chest.y + neck.y };
 
-    var hd = up(B.NECK_HEAD + B.HEAD_R, t + pose.headTilt);
+    var hd = up(b.NECK_HEAD + b.HEAD_R, t + pose.headTilt);
     j.head = { x: j.neck.x + hd.x, y: j.neck.y + hd.y };
 
     // Arms hang from the chest (a stick figure has no shoulder width).
     function arm(sh, el) {
       var a1 = t + sh;
-      var e = down(B.UPPER_ARM, a1);
+      var e = down(b.UPPER_ARM, a1);
       var elbow = { x: j.chest.x + e.x, y: j.chest.y + e.y };
       var a2 = a1 + el;
-      var h = down(B.FOREARM, a2);
+      var h = down(b.FOREARM, a2);
       return {
         elbow: elbow,
         hand: { x: elbow.x + h.x, y: elbow.y + h.y },
@@ -62,9 +116,9 @@ window.Phefo = window.Phefo || {};
     j.elbowF = af.elbow; j.handF = af.hand; j.armAngleF = af.angle;
 
     function leg(hip, knee) {
-      var k = down(B.THIGH, hip);
+      var k = down(b.THIGH, hip);
       var kneePt = { x: j.pelvis.x + k.x, y: j.pelvis.y + k.y };
-      var f = down(B.SHIN, hip + knee);
+      var f = down(b.SHIN, hip + knee);
       return { knee: kneePt, foot: { x: kneePt.x + f.x, y: kneePt.y + f.y } };
     }
 
@@ -111,19 +165,21 @@ window.Phefo = window.Phefo || {};
      * @param opts.weapon      weapon key to draw in the near hand
      * @param opts.weaponAngle override the weapon's rotation (radians, bone space)
      * @param opts.flash       0..1 white hit flash
+     * @param opts.build       bone multipliers — shape only, never height
      */
     draw: function (ctx, x, y, pose, opts) {
       opts = opts || {};
       var facing = opts.facing || 1;
       var scale = opts.scale || 1;
       var color = opts.color || '#e8e2d8';
-      var lw = (opts.lineWidth || 3.1);
+      var b = bonesFor(opts.build);
+      var lw = (opts.lineWidth || 3.1) * (opts.build && opts.build.width || 1);
 
-      var j = build(pose);
+      var j = build(pose, b);
 
       var shift = opts.groundLock
         ? -Math.max(j.footN.y, j.footF.y)
-        : -NOMINAL_HIP;
+        : -(b.hip || NOMINAL_HIP);
       shift += (pose.rootDrop || 0);
 
       ctx.save();
@@ -162,7 +218,7 @@ window.Phefo = window.Phefo || {};
 
       // Head
       ctx.beginPath();
-      ctx.arc(j.head.x, j.head.y, B.HEAD_R, 0, U.TAU);
+      ctx.arc(j.head.x, j.head.y, b.HEAD_R, 0, U.TAU);
       ctx.fillStyle = color;
       ctx.fill();
 
@@ -190,7 +246,7 @@ window.Phefo = window.Phefo || {};
         stroke(ctx, j.chest, j.elbowN);
         stroke(ctx, j.elbowN, j.handN);
         ctx.beginPath();
-        ctx.arc(j.head.x, j.head.y, B.HEAD_R, 0, U.TAU);
+        ctx.arc(j.head.x, j.head.y, b.HEAD_R, 0, U.TAU);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       }
