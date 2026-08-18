@@ -15,9 +15,28 @@ window.Phefo = window.Phefo || {};
    * `knockScale` 0.05 is the character, the way 0.28 is the brute's: it does not
    * flinch, it does not slide, and there is no corner to stagger it into.
    *
+   * `scale` is capped by its own sword. Swings originate at chest height, which
+   * at this size is 64 px up while a standing player's centre is 26 px, so the
+   * blade arrives steeply and the band where it actually connects narrows as the
+   * body grows. At 2.15 that band closes to under a pixel at the range the AI
+   * chooses to stop at, and the beast swings through you. 2.00 keeps ~4 px of
+   * margin and is still half again the brute.
+   *
    * `ctor` routes construction through the Beast subclass, which owns the
    * window. Read at define time, so `js/entities/beast.js` must load first.
    */
+  var SLAM_ABOVE  = 40;   // px the player must be raised before a swing is hopeless
+  var SLAM_BEYOND = 18;   // px past sword reach before the ground is the better bet
+
+  // The high walkway sits 196 px up and explode measures to a target's centre,
+  // another ~26 px, so a radius under about 225 leaves the top of the level
+  // untouchable. Falloff does the rest: reaching you up there costs it most of
+  // the damage.
+  var SLAM_RADIUS          = 230;  // px
+  var SLAM_RADIUS_WOUNDED  = 275;  // px
+  var SLAM_DAMAGE          = 26;   // at the centre, before falloff
+  var SLAM_DAMAGE_WOUNDED  = 34;
+
   P.Enemies.define({
     type: 'beast',
     ctor: P.Beast,
@@ -40,13 +59,33 @@ window.Phefo = window.Phefo || {};
     warnColor: '#e08a3a',
 
     attack: function (e, world) {
+      var pl = world.player;
       var w = e.weapon();
+
+      // A sword cannot answer someone standing on a fire escape, and the beast
+      // does not climb — so when it cannot reach you it hits the ground instead
+      // and lets the road do it. Radial with falloff and no line-of-sight test,
+      // which is exactly why the walkway overhead is the weakest place to stand
+      // rather than a safe one.
+      var above = (e.y - pl.y) > SLAM_ABOVE;
+      var beyond = Math.abs(pl.x - e.x) > w.reach + SLAM_BEYOND;
+
+      if (above || beyond) {
+        P.Combat.explode(
+          e.x, e.y,
+          e.wounded ? SLAM_RADIUS_WOUNDED : SLAM_RADIUS,
+          e.wounded ? SLAM_DAMAGE_WOUNDED : SLAM_DAMAGE,
+          e.faction, world
+        );
+        return;
+      }
+
       var o = P.Combat.origin(e);
-      var c = P.Combat.centre(world.player);
+      var c = P.Combat.centre(pl);
       var angle = Math.atan2(c.y - o.y, c.x - o.x);
 
       P.Audio.play(w.sound || 'slash');
-      var hits = P.Combat.meleeSweep(e, [world.player], w, angle, world);
+      var hits = P.Combat.meleeSweep(e, [pl], w, angle, world);
       if (hits.length) world.camera.addShake(14);
 
       // Carries its whole weight through the swing, which is half the reason it
