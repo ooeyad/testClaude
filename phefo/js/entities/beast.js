@@ -125,5 +125,21 @@ window.Phefo = window.Phefo || {};
     }
   };
 
+  /**
+   * Delegating first is not a style choice: the parent's `onDeath` is what tells
+   * the world an enemy died, and the wave never ends without it.
+   */
+  Beast.prototype.onDeath = function (opts) {
+    P.Enemy.prototype.onDeath.call(this, opts);
+
+    P.FX.explosion(this.x, this.y - this.h * 0.45, 92);
+    P.Audio.play('explode');
+
+    if (opts && opts.world) {
+      opts.world.camera.addShake(24);
+      opts.world.hitstop = Math.max(opts.world.hitstop, 0.18);
+    }
+  };
+
   P.Beast = Beast;
 })(window.Phefo);
