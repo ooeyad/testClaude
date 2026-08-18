@@ -202,3 +202,85 @@ from the approved design, and tuning is T010's job.
 - No slam and no elevation branching — T008. Until then a player on a fire escape
   is safe, which is FR-010 unmet by design at this point in the sequence.
 - No wounded stage — T007. The beast currently fights the same at 5 % as at 100 %.
+
+---
+
+## T007 · T008 · T009 · T010 (first pass) · T011
+
+**Date:** 2026-08-18 · Commits `5331fc0`, `07b10b8`, `8ed154f`, `1333316`,
+plus the memory commit. T010 stays **open** — its first pass was measured, the
+rest is feel.
+
+### Changed
+
+- `beast.js` — `onHurt` turn at half health; private cfg copy; `onDeath`.
+- `enemies/beast.js` — slam branch and its constants; `scale` 2.15 → 2.00.
+- `project-context/` — INV-7 reworded, INV-14 corrected, INV-22 and INV-23 added,
+  TD-001 partly discharged, TD-006 and TD-007 opened, domain and index refreshed.
+
+### Deviations
+
+**A design gap I had to close.** `data-model.md` calls for a colour change on the
+turn, and colour is read from `cfg` — which DD-004 forbids writing because the
+registry shares one object across every spawn. Resolved by giving `Beast` a
+private shallow copy of its config in the constructor. This honours DD-004's
+intent (never mutate shared state) while contradicting its letter (never write
+`this.cfg`), and it is strictly better: the hazard becomes structurally
+impossible for this type rather than a rule to remember. Proven by spawning a
+second beast after the first has turned and finding it untouched.
+
+**`this.jitter` pinned to 1 at spawn.** The parent randomises it 0.85–1.15 for
+crowd variety. The beast is fought once and its timings *are* the fight, so
+randomising them would mean the 0.80 s wind-up was never actually 0.80 s.
+
+**Two XII-2 violations, one fixed and one left.** T007 and T009 both touch
+`beast.js`, and I staged the file after making both edits — a mixed commit. It
+was unpushed, so it was reset and split into two clean commits. Then the same
+thing nearly happened to T008/T010: the script meant to separate them used `\n`
+anchors against a CRLF file, so the multi-line edit silently no-opped while the
+single-line one worked. Net effect: `07b10b8` carries T010's *rationale comment*
+while still holding the pre-tuning value the comment argues against. Cosmetic,
+the final state is correct, and it was not worth a third history rewrite. The
+lesson is the one INV-14 now records.
+
+### Checks
+
+`node --check` in load order: `PARSE OK`. Three harnesses against the committed
+tree: **17 + 19 + 21 = 57 passed, 0 failed.** Highlights:
+
+```
+  PASS  the turn fires when half health is crossed   hp=206.0
+  PASS  and drops it into its recovery as the signal   state=recover
+  PASS  the wind-up is shorter afterwards   0.80s -> 0.58s
+  PASS  the window never closes
+  PASS  a second beast is untouched by the first one's turn
+  PASS  the registry cfg itself was never written
+  PASS  reaches the high walkway 196 px up (FR-010)   9.7 damage
+  PASS  reaches the fire escape 128 px up   14.7 damage
+  PASS  the top of the level is the weakest place to stand   9.7 < 14.7
+  PASS  the slam does not hurt its own escorts   escort hp=42
+  PASS  the world is told, so the wave can end
+  PASS  body is the biggest in the game   beast 104 px vs next biggest 64 px
+        scale 2.15  margin 0.6 px | 2.05  2.8 px | 2.00  3.9 px | 1.95  4.9 px
+```
+
+**Three harness bugs, all mine, all recorded rather than quietly fixed.**
+① The turn test set hp to 52 % and expected one armoured hit (≈6 of 420) to cross
+50 % — it could not. ② Every slam probe read 0 damage: `explode` selects from
+`allCharacters()`, which returns the array `World.step` rebuilds once per step,
+so a world that has never stepped offers no targets. That one is now INV-23,
+because it presents as broken falloff maths rather than an empty list.
+③ "Body is the biggest in the game" asserted `h > 110` — a magic number tied to
+the old scale, so the tuning change failed it. Rewritten to compare against the
+actual roster, which is what the sentence always claimed.
+
+One behaviour changed in response to a check rather than the check being bent:
+the turn opens the window in `onHurt` itself instead of waiting 8 ms for the next
+`update`, so the free window it advertises is open from the instant it is earned.
+
+### Still open
+
+**T010.** The measurable half is done. The half that matters — first attempt a
+loss, win within three to five, mashing outside the window reading as a wall — is
+SC-1 and SC-6, and the constitution says the Project Owner settles those by
+playing. Nothing here substitutes for that.
