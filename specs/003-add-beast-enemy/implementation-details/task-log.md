@@ -94,10 +94,111 @@ $ git diff --ignore-cr-at-eol --stat
  2 files changed, 11 insertions(+), 2 deletions(-)
 ```
 
-### Deliberately not done
+### Deliberately not done (T001/T002)
 
 - No beast file, no script tag, no wave change — T003 onward.
 - Stagger suppression was **not** added to `applyDamage`. It is the beast's own
   rule and belongs in its own file (T003), not in the funnel.
 - INV-7's wording in `invariants.md` is now imprecise for types that set `sight`.
   Left for T011, which owns the memory updates; noted here so it is not lost.
+
+---
+
+## T003 · T004 · T005 · T006 — the P1 slice
+
+**Date:** 2026-08-18 · **Status:** done · Commits `352beeb`, `03e6556`,
+`55b5f70`, `ef6982f` — one per task (XII-2), each leaving the tree runnable.
+
+### Acknowledgement
+
+The subclass owns the vulnerability window and nothing else; the type definition
+is data; the script tags are load order; the wave is level data.
+
+**Assumptions.** ① `this.armor = 1` for "unprotected" rather than deleting the
+property — a no-op multiply, and it keeps the field a number in every state.
+② Zeroing stagger only while armoured, so the window is also the only place the
+beast can be interrupted. **Questions.** None blocking. **Context gaps.** None.
+
+### Changed
+
+- `phefo/js/entities/beast.js` — new. `P.Beast`, armour window on `state ===
+  'recover'`, stagger cleared while armoured, then delegates to the parent.
+- `phefo/js/entities/enemies/beast.js` — new. The type definition and one sword
+  sweep. Elevation branching is T008.
+- `phefo/index.html` — two script tags, subclass first.
+- `phefo/js/levels/level01_city.js` — the final wave entry only.
+
+### Deviations
+
+**One value corrected against `data-model.md` before wiring.** `telegraph` was
+first written 0.58, which is the *wounded* value (0.80 × 0.72) and would have
+tied the brute rather than being the longest wind-up in the game. Corrected to
+0.80 before any check was run.
+
+**One documented instruction was wrong and was not followed.** The task details
+for T003/T004 say new `.js` files "must be written CRLF (INV-14)". The repository
+*stores* LF — `git show HEAD:phefo/js/entities/climber.js` has 0 CR bytes against
+251 LF — and `core.autocrlf=true` produces the CRLF working copies INV-14
+describes. Files were written LF and the working copies normalised to CRLF, so
+both the blob and the working tree match every other file. INV-14's wording
+should say which side it means; noted for T011.
+
+### Checks
+
+**X-1 — syntax, in load order:** `PARSE OK`, no FAIL lines. Load order confirmed:
+`entities/climber.js` 40, `entities/beast.js` 41, `enemies/climber.js` 47,
+`enemies/beast.js` 48, `core/game.js` 59 (last).
+
+**X-2 — behaviour, throwaway `vm` harness** (not committed, X-3):
+
+```
+T005 - wiring
+  PASS  P.Beast exists and the type resolves to it
+  PASS  spawn("beast") builds a Beast, not a plain Enemy
+  PASS  body is the biggest in the game   h=111.8
+T003 - the window
+  PASS  armoured hit is heavily reduced   took 6.12 of 34
+  PASS  hit in the window lands in full   took 34
+  PASS  the window is worth several times a mistimed swing   5.6x
+  PASS  armoured hit does not stagger it   stagger=0
+  PASS  and does not knock it out of its wind-up   state=telegraph
+  PASS  a hit in the window does stagger it   stagger=0.24
+  PASS  status timers tick once per step, not twice (INV-19)   invuln=0.9000
+  PASS  nothing wrote to the shared cfg object (INV-NEW-1)
+T004 - it fights
+  PASS  it winds up and swings at a player in reach   after 86 steps
+  PASS  the swing hurt the player   player hp=0
+  PASS  the sword can reach a standing player at its preferred range (44 px)
+        connects at gaps: 30, 40, 44 px
+T006 - the final wave
+  PASS  the last wave contains exactly one beast
+  PASS  no brute in the last wave
+  PASS  escorts are all existing types
+  PASS  earlier waves untouched: wave 4 still has its brute
+  PASS  no spawn is wedged in geometry (INV-13)   all six moved or engaged
+
+19 passed, 0 failed
+```
+
+The first run of that harness failed on "the swing hurt the player". The harness
+was wrong, not the code — it stopped stepping at the first frame of `attack`,
+before `hitAt` at 0.22 s could arrive. Recorded because a check that was fixed
+until it passed is worth being explicit about.
+
+### Flagged for T010 — the reach margin is thin
+
+The beast closes to `reach × 0.82` = 44.3 px and its sword connects there, but
+the probe shows it connects at 30, 40 and 44 px and **not at 50**. At scale 2.15
+the chest origin sits 69 px up while a standing player's centre is 26 px up, so
+the swing arrives steeply and the band where it lands is about 14 px wide. It
+works, and it has almost no margin: separation shove, a player stepping back
+during the 0.80 s wind-up, or any later change to `scale` could put the beast
+into swinging at air. Tuning candidates are the sword's reach for this type, the
+preferred-range multiplier, or `scale`. Not touched here — T004's values came
+from the approved design, and tuning is T010's job.
+
+### Deliberately not done
+
+- No slam and no elevation branching — T008. Until then a player on a fire escape
+  is safe, which is FR-010 unmet by design at this point in the sequence.
+- No wounded stage — T007. The beast currently fights the same at 5 % as at 100 %.
