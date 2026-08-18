@@ -1,0 +1,49 @@
+{
+  "id": "003",
+  "slug": "add-beast-enemy",
+  "name": "Late-Game Beast",
+  "tier": "deep",
+  "tierReason": "New behaviour subsystem (staged boss fight) beyond what an enemy data definition expresses; likely shared-contract change (world surface / HUD readout); final wave behaviour changes; >2 files",
+  "phase": "tasks",
+  "branch": "feat/003-add-beast-enemy",
+  "status": "tasks derived (T001-T011); ready for /speckit.implement T001",
+  "gates": {
+    "specification": { "required": true, "status": "approved", "by": "Project Owner", "at": "2026-08-18" },
+    "design":        { "required": true, "status": "approved", "by": "Project Owner", "at": "2026-08-18", "note": "FR-011 resolved as option (A): accept the wall limit, author the fight into the open segment; stepUp deferred to TD-006" },
+    "release":       { "required": true, "status": "pending" }
+  },
+  "artifacts": {
+    "spec.md":       { "required": true,  "exists": true,  "cap": 120 },
+    "plan.md":       { "required": true,  "exists": true,  "cap": 150 },
+    "tasks.md":      { "required": true,  "exists": true,  "cap": 140 },
+    "research.md":   { "required": true,  "exists": true,  "cap": 80 },
+    "data-model.md": { "required": true,  "exists": true,  "cap": 100 },
+    "contracts/":    { "required": true,  "exists": true,  "cap": null },
+    "checklists/":   { "required": true,  "exists": false, "cap": 50 },
+    "quickstart.md": { "required": true,  "exists": true,  "cap": 60 }
+  },
+  "tasks": [
+    { "id": "T001", "status": "todo", "parallel": true,  "title": "Armour multiplier in the damage funnel",        "touches": ["phefo/js/combat/hitbox.js"] },
+    { "id": "T002", "status": "todo", "parallel": true,  "title": "cfg.sight and cfg.lineWidth on the shared machine", "touches": ["phefo/js/entities/enemy.js"] },
+    { "id": "T003", "status": "todo", "parallel": false, "title": "The Beast subclass: armour window and stagger rule", "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T004", "status": "todo", "parallel": false, "title": "The beast type definition and its sweep",        "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T005", "status": "todo", "parallel": false, "title": "Load both files in dependency order",            "touches": ["phefo/index.html"] },
+    { "id": "T006", "status": "todo", "parallel": false, "title": "Re-author the final wave",                       "touches": ["phefo/js/levels/level01_city.js"] },
+    { "id": "T007", "status": "todo", "parallel": false, "title": "The wounded turn at half health",                "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T008", "status": "todo", "parallel": false, "title": "The ground slam, chosen by elevation",           "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T009", "status": "todo", "parallel": true,  "title": "Death emphasis",                                 "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T010", "status": "todo", "parallel": false, "title": "Tuning pass against SC-1..SC-6",                 "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T011", "status": "todo", "parallel": true,  "title": "Memory updates",                                 "touches": [".specify/memory/project-context/"] }
+  ],
+  "clarifications": { "open": 0, "resolved": 6 },
+  "contextGaps": [],
+  "readSets": {
+    "always":      [".specify/memory/project-context/index.md", ".specify/memory/project-context/invariants.md", ".specify/memory/constitution.md"],
+    "specifier":   ["spec.md"],
+    "planner":     ["spec.md", "plan.md", ".specify/memory/project-context/architecture.md", ".specify/memory/project-context/domain.md"],
+    "implementer": ["state.json", "implementation-details/task-details.md#<current task>", ".specify/memory/project-context/invariants.md"],
+    "analyzer":    ["spec.md", "plan.md", "tasks.md", "quickstart.md", "<diff>"]
+  },
+  "budget": { "targetTokens": 250000, "spentTokens": null, "artifactBytes": null },
+  "updated": "2026-08-18"
+}
