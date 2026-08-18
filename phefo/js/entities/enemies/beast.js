@@ -55,6 +55,15 @@ window.Phefo = window.Phefo || {};
     recover: 0.95,      // s — the window
     hitAt: 0.22,        // s into the swing
 
+
+    /**
+     * The most distorted body in the game: knuckles near the ground, head almost
+     * lost between its shoulders. It already stands 104 px - this is what makes
+     * that height frightening rather than merely large.
+     */
+    build: { torso: 1.25, arm: 1.30, forearm: 1.15, leg: 0.75, head: 0.70, width: 1.15 },
+    features: ['horns', 'jaw', 'hunch', 'spines'],
+    unrest: 1.5,   // idle amplitude; 1 is calm
     color: '#6b4a3a',
     warnColor: '#e08a3a',
 
