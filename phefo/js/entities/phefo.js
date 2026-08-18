@@ -11,6 +11,17 @@ window.Phefo = window.Phefo || {};
   var FRICTION = 3000;
   var MAX_SPEED = 252;
   var RUN_THRESHOLD = 155;
+
+  /**
+   * Phefo's build. Upright, clean, a little long in the leg — and the only
+   * figure in the game with nothing hanging off it. That absence is the design:
+   * it is what makes every other silhouette read as *other*, so resist the urge
+   * to give the player a horn for balance.
+   *
+   * Multipliers over the shared skeleton. Shape only — the renderer normalises
+   * back to standing height, so none of this moves the collision box.
+   */
+  var BUILD = { arm: 0.95, leg: 1.05, head: 0.92 };
   var JUMP_V = -655;
   var COYOTE = 0.10;      // grace period after walking off a ledge
   var JUMP_BUFFER = 0.12; // grace period for pressing jump just before landing
@@ -300,7 +311,8 @@ window.Phefo = window.Phefo || {};
       lineWidth: 3.2,
       groundLock: this.onGround && !this.dead,
       weapon: this.weaponKey(),
-      flash: this.flash
+      flash: this.flash,
+      build: BUILD
     };
 
     // A drawn gun tracks the cursor regardless of what the legs are doing.
