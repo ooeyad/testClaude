@@ -226,7 +226,7 @@ window.Phefo = window.Phefo || {};
     }
     if (!this.onGround) return Po.air(this.vy);
     if (Math.abs(this.vx) > 12) return Po.walk(this.stride);
-    return Po.idle(this.animT + this.jitter * 3);
+    return Po.idle(this.animT + this.jitter * 3, cfg.unrest);
   };
 
   Enemy.prototype.draw = function (ctx, world) {
@@ -246,7 +246,9 @@ window.Phefo = window.Phefo || {};
       lineWidth: cfg.lineWidth || 3.0,
       groundLock: this.onGround && !this.dead,
       weapon: cfg.weapon,
-      flash: this.flash
+      flash: this.flash,
+      build: cfg.build,
+      features: cfg.features
     };
 
     if (this.dead) opts.alpha = U.clamp((4.2 - this.deathT) / 1.1, 0, 1);

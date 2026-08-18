@@ -34,15 +34,22 @@ window.Phefo = window.Phefo || {};
 
   var Poses = {
 
-    idle: function (t) {
+    /**
+     * Standing. `unrest` widens the breathing without hurrying it — 1 is calm,
+     * higher is a creature that cannot keep still. Amplitude rather than rate on
+     * purpose: a faster idle reads as a different animation, a wider one reads
+     * as the same animal being twitchy.
+     */
+    idle: function (t, unrest) {
       var p = base();
+      var u = unrest || 1;
       var breath = Math.sin(t * 2.1);
-      p.torso = 0.07 + breath * 0.022;
-      p.headTilt = breath * 0.03;
+      p.torso = 0.07 + breath * 0.022 * u;
+      p.headTilt = breath * 0.03 * u;
       p.hipN = 0.12;  p.kneeN = -0.10;
       p.hipF = -0.11; p.kneeF = -0.15;
-      p.shoulderN = 0.14 + breath * 0.05; p.elbowN = -0.32;
-      p.shoulderF = -0.09 + breath * 0.05; p.elbowF = -0.26;
+      p.shoulderN = 0.14 + breath * 0.05 * u; p.elbowN = -0.32;
+      p.shoulderF = -0.09 + breath * 0.05 * u; p.elbowF = -0.26;
       return p;
     },
 

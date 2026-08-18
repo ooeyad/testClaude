@@ -1,0 +1,111 @@
+{
+  "id": "004",
+  "slug": "distinct-enemy-silhouettes",
+  "name": "Distinct Enemy Silhouettes",
+  "tier": "deep",
+  "tierReason": "Shared render contract changed - the one skeleton every character draws through gains per-character build; the player is in scope; a new per-type shape table plus feature-drawing code; 10+ files",
+  "phase": "tasks",
+  "branch": "feat/004-distinct-enemy-silhouettes",
+  "status": "design gate approved 2026-08-18; deriving tasks",
+  "dependsOn": "003 touches js/entities/enemies/beast.js, which this feature also dresses. 003 should reach its release gate first or the two will overlap in that file.",
+  "gates": {
+    "specification": {
+      "required": true,
+      "status": "approved",
+      "by": "Project Owner",
+      "at": "2026-08-18"
+    },
+    "design": {
+      "required": true,
+      "status": "approved",
+      "by": "Project Owner",
+      "at": "2026-08-18",
+      "note": "No open question; DD-003 (scale is size, build is shape) accepted with its cost"
+    },
+    "release": {
+      "required": true,
+      "status": "pending"
+    }
+  },
+  "artifacts": {
+    "spec.md": {
+      "required": true,
+      "exists": true,
+      "cap": 120
+    },
+    "plan.md": {
+      "required": true,
+      "exists": true,
+      "cap": 150
+    },
+    "tasks.md": {
+      "required": true,
+      "exists": false,
+      "cap": 140
+    },
+    "research.md": {
+      "required": true,
+      "exists": true,
+      "cap": 80
+    },
+    "data-model.md": {
+      "required": true,
+      "exists": true,
+      "cap": 100
+    },
+    "contracts/": {
+      "required": true,
+      "exists": true,
+      "cap": null
+    },
+    "checklists/": {
+      "required": true,
+      "exists": false,
+      "cap": 50
+    },
+    "quickstart.md": {
+      "required": true,
+      "exists": true,
+      "cap": 60
+    }
+  },
+  "clarifications": {
+    "open": 0,
+    "resolved": 5
+  },
+  "contextGaps": [],
+  "readSets": {
+    "always": [
+      ".specify/memory/project-context/index.md",
+      ".specify/memory/project-context/invariants.md",
+      ".specify/memory/constitution.md"
+    ],
+    "specifier": [
+      "spec.md"
+    ],
+    "planner": [
+      "spec.md",
+      "plan.md",
+      ".specify/memory/project-context/architecture.md",
+      ".specify/memory/project-context/domain.md"
+    ],
+    "implementer": [
+      "state.json",
+      "implementation-details/task-details.md#<current task>",
+      ".specify/memory/project-context/invariants.md"
+    ],
+    "analyzer": [
+      "spec.md",
+      "plan.md",
+      "tasks.md",
+      "quickstart.md",
+      "<diff>"
+    ]
+  },
+  "budget": {
+    "targetTokens": 250000,
+    "spentTokens": null,
+    "artifactBytes": null
+  },
+  "updated": "2026-08-18"
+}

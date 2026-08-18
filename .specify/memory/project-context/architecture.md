@@ -57,10 +57,25 @@ that does not is built exactly as before. `P.Climber` is the only one today.
 
 ## Rendering
 No sprites, no image files. Player and every enemy are the same skeleton
-(`js/render/stickman.js`), differing only by scale, colour and weapon. A pose is
-a bag of joint **angles** (`js/render/poses.js`); `Stick.build` turns angles into
-points by forward kinematics at draw time. Near limbs draw over the torso, far
-limbs behind and dimmed.
+(`js/render/stickman.js`), differing by scale, colour, weapon, **build** and
+**features**. A pose is a bag of joint **angles** (`js/render/poses.js`);
+`Stick.build` turns angles into points by forward kinematics at draw time. Near
+limbs draw over the torso, far limbs behind and dimmed.
+
+A **build** is a set of multipliers over the one shared bone table, normalised
+afterwards to the character's standing height. **Scale is size, build is shape**,
+and the separation is load-bearing: the collision box is `52 × scale` and is
+computed from `scale` alone, so melee reach, the health bar and the camera all
+derive from it. A body drawn taller than its box would be struck where it does
+not appear to be. A build may never change drawn height — that is `scale`'s job.
+
+**Features** (horns, jaw, hunch, tail, spines, stub, belly, antenna) are a
+handful of strokes hung off a joint, declared behind or in front, drawn beside
+the weapon shapes in the same file and for the same reason. Attach to a joint the
+builder returned, never a screen position, or they detach during death and climb.
+
+A character with no build and no features draws exactly as it did before any of
+this existed, which is what keeps every step of it revertible.
 
 `js/core/audio.js` synthesizes every sound with WebAudio at runtime. Browsers
 block `AudioContext` until a gesture, so `Audio.init()` is deferred through

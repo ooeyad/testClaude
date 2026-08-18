@@ -32,6 +32,13 @@ window.Phefo = window.Phefo || {};
     shotTimes: [0.03, 0.19],
     recover: 0.72,
 
+
+    /**
+     * Lean and hunched over its aim, thinner-lined than the rest.
+     */
+    build: { arm: 1.10, leg: 0.95, head: 0.85, width: 0.90 },
+    features: ['jaw', 'spines'],
+    unrest: 1.2,   // idle amplitude; 1 is calm
     color: '#96a2ad',
     warnColor: '#e5a05c',
 

@@ -17,6 +17,9 @@
 | i-frames | `target.invuln > 0` — damage is refused | `js/combat/hitbox.js` |
 | Chip damage | damage that lands through a block, via `Combat.kill` | `js/combat/hitbox.js` |
 | Pose | a bag of joint angles resolved by forward kinematics at draw time | `js/render/poses.js` |
+| Build | multipliers over the shared bone table, normalised back to standing height. **Shape, never size** — size is `scale` | `js/render/stickman.js`, per character |
+| Feature | a few strokes hung off a joint — horns, jaw, hunch, tail, spines, stub, belly, antenna. Declares behind or in front | `js/render/stickman.js` |
+| Unrest | per-character multiplier on the idle animation's amplitude; 1 is calm | `js/render/poses.js` |
 | Projectile kind | a row in `KINDS`; `grav` controls arc | `js/entities/projectile.js` |
 | Ladder | a vertical route `{x, top, bottom}` between two surfaces, usable only by climbing enemies. Never a solid. | `js/levels/level.js`, `def.ladders` |
 | Climber | the one enemy that traverses ladders; a subclass of `Enemy` that delegates all ground behaviour to it | `js/entities/climber.js` |
