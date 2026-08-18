@@ -26,6 +26,14 @@ window.Phefo = window.Phefo || {};
     recover: 0.52,
     hitAt: 0.17,
 
+
+    /**
+     * Composed, and only slightly wrong. The disciplined one, so the least
+     * distorted enemy in the game - something has to sit near neutral or
+     * "distorted" stops meaning anything. The jaw is the only tell.
+     */
+    build: { torso: 1.10, arm: 1.05, leg: 1.05, head: 0.90 },
+    features: ['jaw'],
     color: '#9aa4ad',
     warnColor: '#e8934a',
 
