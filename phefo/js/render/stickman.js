@@ -205,6 +205,13 @@ window.Phefo = window.Phefo || {};
       stroke(ctx, j.chest, j.elbowF);
       stroke(ctx, j.elbowF, j.handF);
 
+      // Behind-the-body features ride the far-limb pass and inherit its dimming.
+      if (opts.features) {
+        for (var fb = 0; fb < opts.features.length; fb++) {
+          this.drawFeature(ctx, opts.features[fb], j, b, 'back');
+        }
+      }
+
       ctx.globalAlpha = (opts.alpha == null ? 1 : opts.alpha);
 
       // Torso
@@ -225,6 +232,13 @@ window.Phefo = window.Phefo || {};
       // Near arm, drawn over the torso
       stroke(ctx, j.chest, j.elbowN);
       stroke(ctx, j.elbowN, j.handN);
+
+      if (opts.features) {
+        ctx.fillStyle = color;
+        for (var ff = 0; ff < opts.features.length; ff++) {
+          this.drawFeature(ctx, opts.features[ff], j, b, 'front');
+        }
+      }
 
       // Weapon sits in the near hand, aligned with the forearm.
       if (opts.weapon && opts.weapon !== 'fist') {
@@ -253,6 +267,102 @@ window.Phefo = window.Phefo || {};
 
       ctx.restore();
       return j;
+    },
+
+    /**
+     * Features are drawn in skeleton-local space, hung off a joint the builder
+     * returned — never off a screen position, which is what keeps them attached
+     * through every pose including death and the climb.
+     *
+     * Same reasoning as the weapons below: a switch and a handful of strokes.
+     * They run inside the existing transform, so mirroring and scaling are free.
+     * `pass` is 'back' or 'front'; a feature drawn in the back pass inherits the
+     * dimmed alpha the far limbs already use and must not set its own.
+     *
+     * An unknown name is ignored. Type data is unvalidated everywhere else in
+     * this project, and a typo should cost a missing horn, not a dead frame.
+     */
+    drawFeature: function (ctx, key, j, b, pass) {
+      var r = b.HEAD_R;
+
+      switch (key) {
+        case 'horns':
+          if (pass !== 'front') return;
+          ctx.beginPath();
+          ctx.moveTo(j.head.x - r * 0.7, j.head.y - r * 0.5);
+          ctx.lineTo(j.head.x - r * 1.5, j.head.y - r * 2.1);
+          ctx.moveTo(j.head.x + r * 0.7, j.head.y - r * 0.5);
+          ctx.lineTo(j.head.x + r * 1.5, j.head.y - r * 2.1);
+          ctx.stroke();
+          break;
+
+        case 'antenna':
+          if (pass !== 'front') return;
+          ctx.beginPath();
+          ctx.moveTo(j.head.x, j.head.y - r * 0.8);
+          ctx.lineTo(j.head.x + r * 0.6, j.head.y - r * 2.6);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(j.head.x + r * 0.6, j.head.y - r * 2.6, r * 0.28, 0, U.TAU);
+          ctx.fill();
+          break;
+
+        case 'jaw':
+          if (pass !== 'front') return;
+          ctx.beginPath();
+          ctx.moveTo(j.head.x + r * 0.2, j.head.y + r * 0.5);
+          ctx.lineTo(j.head.x + r * 1.9, j.head.y + r * 0.9);
+          ctx.lineTo(j.head.x + r * 0.2, j.head.y + r * 1.2);
+          ctx.stroke();
+          break;
+
+        case 'hunch':
+          if (pass !== 'front') return;
+          ctx.beginPath();
+          ctx.arc(j.chest.x, j.chest.y, r * 1.5, Math.PI * 1.05, Math.PI * 1.95);
+          ctx.stroke();
+          break;
+
+        case 'spines':
+          if (pass !== 'back') return;
+          ctx.beginPath();
+          for (var i = 1; i <= 3; i++) {
+            var f = i / 4;
+            var sx = j.pelvis.x + (j.neck.x - j.pelvis.x) * f;
+            var sy = j.pelvis.y + (j.neck.y - j.pelvis.y) * f;
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx - r * 1.4, sy - r * 0.5);
+          }
+          ctx.stroke();
+          break;
+
+        case 'tail':
+          if (pass !== 'back') return;
+          ctx.beginPath();
+          ctx.moveTo(j.pelvis.x, j.pelvis.y);
+          ctx.quadraticCurveTo(j.pelvis.x - r * 2.4, j.pelvis.y + r * 0.4,
+                               j.pelvis.x - r * 2.0, j.pelvis.y - r * 1.6);
+          ctx.stroke();
+          break;
+
+        case 'stub':
+          if (pass !== 'back') return;
+          ctx.beginPath();
+          ctx.moveTo(j.chest.x, j.chest.y + r * 0.3);
+          ctx.lineTo(j.chest.x + r * 1.3, j.chest.y + r * 1.1);
+          ctx.lineTo(j.chest.x + r * 2.0, j.chest.y + r * 0.4);
+          ctx.stroke();
+          break;
+
+        case 'belly':
+          if (pass !== 'front') return;
+          ctx.beginPath();
+          ctx.arc(j.pelvis.x + (j.chest.x - j.pelvis.x) * 0.45,
+                  j.pelvis.y + (j.chest.y - j.pelvis.y) * 0.45,
+                  r * 1.35, Math.PI * 1.75, Math.PI * 0.65);
+          ctx.stroke();
+          break;
+      }
     },
 
     /**
