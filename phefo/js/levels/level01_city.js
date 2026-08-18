@@ -104,15 +104,24 @@ window.Phefo = window.Phefo || {};
         { type: 'gunman',   x: 1520 },
         { type: 'climber',  x: 1450 }
       ],
+      // The whole last wave is authored into one stretch of road: the 552 px
+      // between the concrete block and the low block, the only segment a beast
+      // cannot be walked away from, with two fire escapes and a ladder over it
+      // so there is somewhere to run that costs something. Nothing here can
+      // cross those blocks — no enemy in the game can — which is why every
+      // spawn sits inside them rather than trusting anyone to arrive.
+      //
+      // The brute is gone from this wave on purpose. Two enormous slow bodies
+      // read as one idea, and the beast is that idea finished.
       [
-        { type: 'swordsman', x: 1000 },
-        { type: 'swordsman', x: 1620 },
-        { type: 'brute',     x: 1790 },
-        // Kept on the road: Enemy only acquires a target within 120px of its own
-        // height, so an archer parked on the walkway would never open fire.
-        { type: 'climber',   x: 1880 },
-        { type: 'archer',    x: 1950 },
-        { type: 'gunman',    x: 2260 }
+        { type: 'swordsman', x: 1200 },
+        { type: 'gunman',    x: 1250 },
+        { type: 'beast',     x: 1380 },
+        // On the ladder at 1450, so the high ground is contested by something
+        // that can follow you onto it while the beast is answering from below.
+        { type: 'climber',   x: 1450 },
+        { type: 'swordsman', x: 1600 },
+        { type: 'archer',    x: 1900 }
       ]
     ],
 

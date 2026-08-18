@@ -20,7 +20,9 @@ New-Item -ItemType Directory -Force -Path $specs | Out-Null
 # Next free number. Width grows past 999 rather than colliding.
 $used = Get-ChildItem $specs -Directory -ErrorAction SilentlyContinue |
         ForEach-Object { if ($_.Name -match '^(\d+)-') { [int]$Matches[1] } }
-$next = if ($used) { ($used | Measure-Object -Maximum).Maximum + 1 } else { 1 }
+# [int] is load-bearing: Windows PowerShell 5.1 returns Maximum as a double, and
+# the D3 format specifier below only accepts an integral type.
+$next = if ($used) { [int]($used | Measure-Object -Maximum).Maximum + 1 } else { 1 }
 $num  = if ($next -lt 1000) { '{0:D3}' -f $next } else { "$next" }
 
 $slug = ($Name.ToLower() -replace '[^a-z0-9]+', '-').Trim('-')

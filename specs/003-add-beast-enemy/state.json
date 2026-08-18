@@ -1,0 +1,50 @@
+{
+  "id": "003",
+  "slug": "add-beast-enemy",
+  "name": "Late-Game Beast",
+  "tier": "deep",
+  "tierReason": "New behaviour subsystem (staged boss fight) beyond what an enemy data definition expresses; likely shared-contract change (world surface / HUD readout); final wave behaviour changes; >2 files",
+  "phase": "implement",
+  "branch": "feat/003-add-beast-enemy",
+  "phaseNote": "T001-T009 and T011 done. T010 awaits the Project Owner playing it; then /speckit.analyze and the release gate",
+  "status": "all three stories implemented; 57 harness checks green. Outstanding: T010 feel tuning, checklists/, /speckit.analyze, release gate",
+  "gates": {
+    "specification": { "required": true, "status": "approved", "by": "Project Owner", "at": "2026-08-18" },
+    "design":        { "required": true, "status": "approved", "by": "Project Owner", "at": "2026-08-18", "note": "FR-011 resolved as option (A): accept the wall limit, author the fight into the open segment; stepUp deferred to TD-006" },
+    "release":       { "required": true, "status": "pending" }
+  },
+  "artifacts": {
+    "spec.md":       { "required": true,  "exists": true,  "cap": 120 },
+    "plan.md":       { "required": true,  "exists": true,  "cap": 150 },
+    "tasks.md":      { "required": true,  "exists": true,  "cap": 140 },
+    "research.md":   { "required": true,  "exists": true,  "cap": 80 },
+    "data-model.md": { "required": true,  "exists": true,  "cap": 100 },
+    "contracts/":    { "required": true,  "exists": true,  "cap": null },
+    "checklists/":   { "required": true,  "exists": false, "cap": 50 },
+    "quickstart.md": { "required": true,  "exists": true,  "cap": 60 }
+  },
+  "tasks": [
+    { "id": "T001", "status": "done", "parallel": true,  "title": "Armour multiplier in the damage funnel",        "touches": ["phefo/js/combat/hitbox.js"] },
+    { "id": "T002", "status": "done", "parallel": true,  "title": "cfg.sight and cfg.lineWidth on the shared machine", "touches": ["phefo/js/entities/enemy.js"] },
+    { "id": "T003", "status": "done", "commit": "352beeb", "parallel": false, "title": "The Beast subclass: armour window and stagger rule", "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T004", "status": "done", "commit": "03e6556", "parallel": false, "title": "The beast type definition and its sweep",        "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T005", "status": "done", "commit": "55b5f70", "parallel": false, "title": "Load both files in dependency order",            "touches": ["phefo/index.html"] },
+    { "id": "T006", "status": "done", "commit": "ef6982f", "parallel": false, "title": "Re-author the final wave",                       "touches": ["phefo/js/levels/level01_city.js"] },
+    { "id": "T007", "status": "done", "commit": "5331fc0", "parallel": false, "title": "The wounded turn at half health",                "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T008", "status": "done", "commit": "07b10b8", "parallel": false, "title": "The ground slam, chosen by elevation",           "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T009", "status": "done", "commit": "8ed154f", "parallel": true,  "title": "Death emphasis",                                 "touches": ["phefo/js/entities/beast.js"] },
+    { "id": "T010", "status": "in-progress", "commit": "1333316", "note": "measured pass done (scale 2.00); SC-1/SC-6 feel judgement outstanding, Project Owner", "parallel": false, "title": "Tuning pass against SC-1..SC-6",                 "touches": ["phefo/js/entities/enemies/beast.js"] },
+    { "id": "T011", "status": "done", "commit": "23c9f8a", "parallel": true,  "title": "Memory updates",                                 "touches": [".specify/memory/project-context/"] }
+  ],
+  "clarifications": { "open": 0, "resolved": 6 },
+  "contextGaps": [],
+  "readSets": {
+    "always":      [".specify/memory/project-context/index.md", ".specify/memory/project-context/invariants.md", ".specify/memory/constitution.md"],
+    "specifier":   ["spec.md"],
+    "planner":     ["spec.md", "plan.md", ".specify/memory/project-context/architecture.md", ".specify/memory/project-context/domain.md"],
+    "implementer": ["state.json", "implementation-details/task-details.md#<current task>", ".specify/memory/project-context/invariants.md"],
+    "analyzer":    ["spec.md", "plan.md", "tasks.md", "quickstart.md", "<diff>"]
+  },
+  "budget": { "targetTokens": 250000, "spentTokens": null, "artifactBytes": null },
+  "updated": "2026-08-18"
+}

@@ -67,6 +67,13 @@ window.Phefo = window.Phefo || {};
       if (target.dead || target.remove) return false;
       if (target.invuln > 0) return false;
 
+      // Armour scales the hit before the guard branch, so a blocking armoured
+      // target takes 15% of an already-reduced number rather than instead of it.
+      // Nothing downstream changes: blood, flash, hitstop, sound and the return
+      // value are what tell the player a hit landed and was shrugged off, and a
+      // hit that produced none of them would read as a broken hitbox.
+      if (target.armor != null) amount *= target.armor;
+
       // A raised guard eats most of a frontal hit and sprays sparks instead.
       // The remaining 15% still lands: chip damage is what keeps a guard from
       // being an infinite wall, and it is the reason trading into a swordsman's

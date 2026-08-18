@@ -15,7 +15,7 @@
 | Damage, weapons | `phefo/js/combat/` | anything that deals or takes damage |
 | Entities (player, enemy, projectile, pickup) | `phefo/js/entities/` | new actor or behaviour |
 | Enemy type definitions (data) | `phefo/js/entities/enemies/` | new enemy |
-| Ladder traversal (the one `Enemy` subclass) | `phefo/js/entities/climber.js` | elevation, climbing, subclassing `Enemy` |
+| `Enemy` subclasses — ladder traversal, boss window | `phefo/js/entities/climber.js`, `beast.js` | elevation, climbing, subclassing `Enemy` |
 | Levels (data) | `phefo/js/levels/` | geometry, spawns, waves |
 | Stick figure, poses, FX, backdrop | `phefo/js/render/` | anything visual |
 | HUD, menus | `phefo/js/ui/` | screens |
