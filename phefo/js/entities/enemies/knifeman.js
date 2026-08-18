@@ -24,6 +24,14 @@ window.Phefo = window.Phefo || {};
     recover: 0.34,
     hitAt: 0.09,
 
+
+    /**
+     * Comic. Scrawny, small-headed, arms too long for it, and never still. The
+     * threat is low and it looks it.
+     */
+    build: { arm: 1.15, leg: 0.85, head: 0.80, width: 0.85 },
+    features: ['antenna', 'tail'],
+    unrest: 1.6,   // idle amplitude; 1 is calm
     color: '#8c9aa6',
     warnColor: '#e0a45c',
 

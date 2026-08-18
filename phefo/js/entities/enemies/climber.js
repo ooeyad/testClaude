@@ -34,6 +34,15 @@ window.Phefo = window.Phefo || {};
     recover: 0.32,
     hitAt: 0.08,
 
+
+    /**
+     * Comic, and the knifeman's twin in build - so the features do the separating:
+     * a third arm too small to be any use. All arms and no legs, which is why it
+     * is at home on a ladder and embarrassed on the ground.
+     */
+    build: { arm: 1.35, forearm: 1.15, leg: 0.80, head: 0.75 },
+    features: ['antenna', 'stub'],
+    unrest: 1.9,   // idle amplitude; 1 is calm
     color: '#8fb3bd',
     warnColor: '#e0a45c',
 
