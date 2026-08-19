@@ -286,13 +286,21 @@ window.Phefo = window.Phefo || {};
       var r = b.HEAD_R;
 
       switch (key) {
+        // Wide and forward, not tall. Two long lines rising off a round head are
+        // rabbit ears — which is what these were before anyone looked at them.
+        // Kept low and swept out so the head reads as broad rather than eared.
+        // Swept back along the skull, not raised off it. Anything that rises
+        // symmetrically from a small round head reads as ears or bat wings —
+        // both previous attempts did, which is why this one lies flat and points
+        // the wrong way down the body.
         case 'horns':
           if (pass !== 'front') return;
           ctx.beginPath();
-          ctx.moveTo(j.head.x - r * 0.7, j.head.y - r * 0.5);
-          ctx.lineTo(j.head.x - r * 1.5, j.head.y - r * 2.1);
-          ctx.moveTo(j.head.x + r * 0.7, j.head.y - r * 0.5);
-          ctx.lineTo(j.head.x + r * 1.5, j.head.y - r * 2.1);
+          ctx.moveTo(j.head.x + r * 0.5, j.head.y - r * 0.7);
+          ctx.lineTo(j.head.x - r * 1.5, j.head.y - r * 1.5);
+          ctx.lineTo(j.head.x - r * 2.7, j.head.y - r * 0.9);
+          ctx.moveTo(j.head.x + r * 0.7, j.head.y - r * 0.1);
+          ctx.lineTo(j.head.x - r * 1.2, j.head.y - r * 0.7);
           ctx.stroke();
           break;
 
@@ -307,13 +315,34 @@ window.Phefo = window.Phefo || {};
           ctx.fill();
           break;
 
+        // A jut, not a beak. Long and horizontal turned the swordsman into a
+        // duck; kept short and angled down it reads as an undershot jaw.
         case 'jaw':
           if (pass !== 'front') return;
           ctx.beginPath();
-          ctx.moveTo(j.head.x + r * 0.2, j.head.y + r * 0.5);
-          ctx.lineTo(j.head.x + r * 1.9, j.head.y + r * 0.9);
-          ctx.lineTo(j.head.x + r * 0.2, j.head.y + r * 1.2);
+          ctx.moveTo(j.head.x + r * 0.15, j.head.y + r * 0.45);
+          ctx.lineTo(j.head.x + r * 1.05, j.head.y + r * 1.05);
+          ctx.lineTo(j.head.x - r * 0.10, j.head.y + r * 1.15);
           ctx.stroke();
+          break;
+
+        // Actual mass, not a thicker line. Stroke weight alone cannot make a
+        // stick figure read as heavy — the body has to enclose area, and a small
+        // head against a filled torso is the whole dread cue.
+        case 'bulk':
+          if (pass !== 'front') return;
+          var bx = j.neck.x - j.pelvis.x, by = j.neck.y - j.pelvis.y;
+          var bl = Math.sqrt(bx * bx + by * by) || 1;
+          var nx = -by / bl, ny = bx / bl;
+          var bw = r * 2.9;
+          ctx.beginPath();
+          ctx.moveTo(j.pelvis.x + nx * bw * 0.45, j.pelvis.y + ny * bw * 0.45);
+          ctx.quadraticCurveTo(j.chest.x + nx * bw, j.chest.y + ny * bw,
+                               j.neck.x + nx * bw * 0.30, j.neck.y + ny * bw * 0.30);
+          ctx.lineTo(j.neck.x - nx * bw * 0.30, j.neck.y - ny * bw * 0.30);
+          ctx.quadraticCurveTo(j.chest.x - nx * bw, j.chest.y - ny * bw,
+                               j.pelvis.x - nx * bw * 0.45, j.pelvis.y - ny * bw * 0.45);
+          ctx.fill();
           break;
 
         case 'hunch':
