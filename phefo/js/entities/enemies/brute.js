@@ -32,8 +32,8 @@ window.Phefo = window.Phefo || {};
      * Dread. A huge torso on short legs with a head too small for either, which
      * is the strongest thing available without art. The horns are the least of it.
      */
-    build: { torso: 1.20, arm: 1.15, leg: 0.80, head: 0.75, width: 1.25 },
-    features: ['hunch', 'horns'],
+    build: { torso: 1.45, arm: 1.20, leg: 0.60, head: 0.55, width: 1.70 },
+    features: ['bulk', 'horns'],
     unrest: 1.3,   // idle amplitude; 1 is calm
     color: '#7f8a93',
     warnColor: '#f0663a',

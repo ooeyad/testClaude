@@ -28,11 +28,13 @@ window.Phefo = window.Phefo || {};
 
 
     /**
-     * Composed, and only slightly wrong. The disciplined one, so the least
-     * distorted enemy in the game - something has to sit near neutral or
-     * "distorted" stops meaning anything. The jaw is the only tell.
+     * Composed rather than deformed: short-armed, broad, upright. It is the
+     * disciplined one, so it is the least *strange* enemy - but not the least
+     * distinct. Near-neutral was the first attempt and it collided with Phefo,
+     * who is the reference everything else is read against and therefore the
+     * one figure that gets to be plain.
      */
-    build: { torso: 1.10, arm: 1.05, leg: 1.05, head: 0.90 },
+    build: { torso: 1.18, arm: 0.92, leg: 0.98, head: 0.82, width: 1.40 },
     features: ['jaw'],
     color: '#9aa4ad',
     warnColor: '#e8934a',

@@ -21,7 +21,7 @@ window.Phefo = window.Phefo || {};
    * Multipliers over the shared skeleton. Shape only — the renderer normalises
    * back to standing height, so none of this moves the collision box.
    */
-  var BUILD = { arm: 0.95, leg: 1.05, head: 0.92 };
+  var BUILD = { arm: 0.95, leg: 1.10, head: 0.98 };
   var JUMP_V = -655;
   var COYOTE = 0.10;      // grace period after walking off a ledge
   var JUMP_BUFFER = 0.12; // grace period for pressing jump just before landing

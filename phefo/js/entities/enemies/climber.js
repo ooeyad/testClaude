@@ -40,7 +40,7 @@ window.Phefo = window.Phefo || {};
      * a third arm too small to be any use. All arms and no legs, which is why it
      * is at home on a ladder and embarrassed on the ground.
      */
-    build: { arm: 1.35, forearm: 1.15, leg: 0.80, head: 0.75 },
+    build: { head: 1.30, arm: 1.55, forearm: 1.20, leg: 0.70, width: 0.72 },
     features: ['antenna', 'stub'],
     unrest: 1.9,   // idle amplitude; 1 is calm
     color: '#8fb3bd',

@@ -51,7 +51,7 @@ window.Phefo = window.Phefo || {};
      * Long and spidery, built around the draw - the tallest-reading silhouette
      * without being any taller.
      */
-    build: { arm: 1.20, forearm: 1.10, leg: 1.10, head: 0.80 },
+    build: { arm: 1.28, forearm: 1.18, leg: 1.18, head: 0.78, width: 0.78 },
     features: ['spines', 'tail'],
     unrest: 1.1,   // idle amplitude; 1 is calm
     color: '#94a08d',

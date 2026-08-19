@@ -25,7 +25,7 @@ positions the skeleton builder returns.
 | QS | Scenario | Passes when |
 |---|---|---|
 | QS-1 | Draw every character with its build, and again with the build removed | Standing height and both foot positions are identical to within a pixel — the guarantee the whole feature rests on (DD-003, INV-1) |
-| QS-2 | Compare each of the eight builds against every other | No two produce the same set of joint positions; the closest pair is still separated by more than a stroke width (FR-002, FR-003) |
+| QS-2 | Rasterise all eight and compare **silhouettes** pairwise by intersection-over-union | No pair overlaps more than 0.80 (FR-002, FR-003). **Do not** measure this by summing joint displacement — the first version of this check compared a six-joint total against one stroke width, and passed while the figures were visibly identical. Shape questions are answered by rendering the shape |
 | QS-3 | Drive one character through all eleven poses, plus death and climb | Every feature stays attached to its joint in every pose (Edge 3) |
 | QS-4 | Draw a character facing each way | Features mirror with the body and none renders on the wrong side (Edge 2) |
 | QS-5 | Count path operations for the full final wave, before and after | Within the budget in `data-model.md`; no character exceeds six stroke operations of features (FR-012, DD-010) |
