@@ -76,3 +76,71 @@ branch per feature and nothing enforced it.
 
 **T010.** Every number was chosen by reasoning about what reads as creepy. None
 of it has been looked at. Expect several to be wrong.
+
+---
+
+## T010 — tuning, done by looking
+
+**Date:** 2026-08-19. The Project Owner could not judge this, so it was done by
+rendering the cast headlessly and reading the picture. That is weaker than a
+human eye on the running game and stronger than nothing; the release gate should
+record which of the two it got.
+
+### Method
+
+A throwaway rasteriser (never committed, X-3) runs the **real** renderer against
+a minimal canvas implementation — transform stack, thick-line and polygon fill,
+supersampled — and writes a PNG. Figures are drawn monochrome at one size, which
+is exactly the condition SC-1 specifies.
+
+### What the first render showed
+
+All eight were near-identical thin sticks, and the brute and beast read as
+**rabbits**: two long lines rising off a small round head are ears. FR-006 was
+not merely unmet, it was inverted.
+
+Every number in `data-model.md` had been reasoned about and none had been seen.
+
+### Three rounds of correction
+
+| | |
+|---|---|
+| 1 | Heads spread far wider (0.45 to 1.45, was 0.7–0.95). A **bobblehead reads funny; a shrunken head reads menacing** — the original range was too narrow for either to land. |
+| 2 | `bulk` added: a filled torso. Stroke weight cannot make a stick figure heavy; a body must enclose area. The heavies now carry ~2× the player's ink (beast 2581 px, phefo 1046 px). |
+| 3 | Horns swept back flat (rabbit ears → bat wings → swept). Jaw shortened (the swordsman was a duck). Swordsman broadened. |
+
+### The check that was wrong
+
+QS-2 summed joint displacement across six joints and compared it to a **single
+stroke width**. 3.44 px total is ~0.6 px per joint. It passed on the render that
+visibly failed, and it would have kept passing. Replaced with pairwise
+silhouette intersection-over-union on the rasterised figures:
+
+```
+  28 pairs distinct, 0 too alike (threshold 0.80)
+  closest pair: phefo / swordsman at 0.779
+```
+
+That check also found something the eye had not: at 0.896, **phefo and the
+swordsman were too alike**. The swordsman had been made deliberately near-neutral
+and the player is also near-neutral — both cannot be plain, and the player is the
+reference. The swordsman was broadened.
+
+### Rasteriser bugs, mine, both of which produced false pictures
+
+① `fill()` fell back to stroking, so a filled body mass would have appeared as an
+outline — it would have lied about the exact thing being judged. ② `_lastArc` was
+not cleared on `beginPath`, so the first `bulk` fill drew a second head instead
+of a torso, and I spent a round believing the feature was not being called. The
+browser would have rendered both correctly.
+
+### Verification
+
+`node --check` clean in load order. **111 checks green**: 38 + 16 for this
+feature, plus 003's full 57-check regression re-run, which is how FR-009 stays
+evidenced after every tuning change.
+
+### Still not verified
+
+FR-007 — "does not look at rest while idle". `unrest` is animation over time and
+a still frame cannot show it. Nothing here tested it.
